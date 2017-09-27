@@ -120,6 +120,11 @@ sudo supervisorctl start dfbuilder-main-worker:*   sudo supervisorctl start defa
 - if worker not working then run: ```sudo supervisord```
 - or to restart suprivisor ```supervisorctl restart all```
 
+Finally you need to start the cronjob.
+```
+* * * * * php /path-to-your-project/artisan schedule:run >> /dev/null 2>&1
+```
+
 Now your ready!
 
 

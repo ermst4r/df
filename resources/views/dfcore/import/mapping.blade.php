@@ -112,9 +112,9 @@
                         <span class="sr-only">Toggle Dropdown</span>
                     </button>
                     <ul class="dropdown-menu" role="menu">
-                        <li>  <a href="{!! route('import.composite_key',['id'=>$id]) !!}" ><i class="fa fa-key"></i> {!! trans('messages.import_mapping_composite_3') !!}  </a></li>
+                        <li>  <a href="{!! route('import.composite_key',['id'=>$id]) !!}" ><i class="fa fa-key"></i>  </a></li>
                         @if($type == \App\DfCore\DfBs\Enum\ImportType::XML)
-                            <li>  <a href="" data-toggle="modal" data-target="#open_root_node" ><i class ="fa fa-cog"></i>Xml settings</a></li>
+                            <li>  <a href="" data-toggle="modal" data-target="#open_root_node" ><i class ="fa fa-cog"></i></a></li>
                         @endif
 
                     </ul>
