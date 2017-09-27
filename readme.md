@@ -1,4 +1,8 @@
-# DDFbuilder.com
+# DFbuilder.com
+<p align="center">
+<img src="http://dfbuilder.com/wp-content/uploads/2017/09/Logo_DFBuilder_transarant-02.png" alt="">
+</p>
+
 DFbuilder.com is an open-source feed management tool. 
 
 You can apply different rules and categorizations to a the productfeed. 
