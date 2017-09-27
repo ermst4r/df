@@ -1,0 +1,21 @@
+[program:dfbuilder-main-worker]
+process_name=%(program_name)s_%(process_num)02d
+command=php /var/www/dfbuilder/artisan queue:work --queue=high,medium,low --sleep=3 --tries=3 --daemon
+autostart=true
+autorestart=true
+user=root
+numprocs=4
+redirect_stderr=true
+stdout_logfile=/var/www/dfbuilder/storage/logs/dfbuilder-main-worker.log
+
+
+[program:default-worker]
+process_name=%(program_name)s_%(process_num)02d
+command=php /var/www/dfbuilder/artisan queue:work --queue=default --sleep=3 --tries=3 --daemon
+autostart=true
+autorestart=true
+user=root
+numprocs=1
+redirect_stderr=true
+stdout_logfile=/var/www/dfbuilder/storage/logs/default-worker.log
+

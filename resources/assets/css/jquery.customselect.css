@@ -1,0 +1,118 @@
+/*
+ *  This file is part of Dfbuilder.
+ *
+ *     Dfbuilder is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     Dfbuilder is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with Dfbuilder.  If not, see <http://www.gnu.org/licenses/>
+ */
+
+
+
+
+ul.customselect {
+    padding: 0px 0px 0px 5px;
+    overflow: hidden;
+    margin-left: inherit;
+    margin-right: inherit;
+    font-size: 12px !important;
+    height: 40px;
+    margin-bottom:-10px;
+
+
+}
+ul.customselect li {
+    display: block;
+    float: left;
+    margin: 2px 5px 2px 0;
+    width:auto;
+
+
+}
+ul.customselect li.customselect-choice {    
+    position: relative;
+    line-height: inherit;
+}
+input.customselect-hidden-field {
+    display: none;
+}
+ul.customselect li.customselect-choice-read-only { 
+    padding: .2em .5em .2em .5em; 
+} 
+
+ul.customselect li.customselect-choice-editable { 
+    padding: .2em 18px .2em .5em;
+    margin-top:4px;
+} 
+
+ul.customselect li.customselect-new, ul.customselect li.customselect-old  {
+    padding: .5em 4px .5em 0;
+}
+
+ul.customselect li.customselect-choice a.customselect-label {
+    cursor: pointer;
+    text-decoration: none;
+}
+ul.customselect li.customselect-choice .customselect-close {
+    cursor: pointer;
+    position: absolute;
+    right: .1em;
+    top: 50%;
+    margin-top: -8px;
+    line-height: 17px;
+
+}
+
+/* used for some custom themes that don't need image icons */
+ul.customselect li.customselect-choice .customselect-close .text-icon {
+    display: none;
+}
+
+ul.customselect li.customselect-choice input {
+    display: block;
+    float: left;
+    margin: 2px 5px 2px 0;
+}
+ul.customselect input[type="text"] {
+    -moz-box-sizing:    border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing:         border-box;
+
+    -moz-box-shadow: none;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+
+    border: none;
+    margin: 0;
+    padding: 0;
+    width: inherit;
+    background-color: inherit;
+    outline: none;
+}
+.ui-selectmenu-icon.ui-icon.ui-icon-triangle-1-s{display: none;}
+.ui-selectmenu-button.ui-button{width:auto;border:none;}
+.ui-selectmenu-menu.ui-front{font-size:12px !important;}
+button.custom-select-adder.ui-button.ui-corner-all.ui-widget {
+    margin-top: 7px;
+}
+.ui-widget.ui-widget-content{display: inline-block;}
+.customselect-choice .ui-icon{margin-top: 0;}
+div.ui-widget-content, div.ui-widget-content:focus{border:none;outline: 0px solid transparent;padding: 5px}
+span.customeselect-placeholder {
+    position: absolute;
+    line-height: 28px;
+    padding-left: 5px;
+    top: 4px;
+    color: #aaa;
+    pointer-events: none;
+}
+.customeselect-showplaceholder{min-width: 150px;}
+.customselect-button{padding: 14px; height: 35px; width: 50px; margin-top:1px; margin-right:2px; float: right;}

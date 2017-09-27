@@ -1,0 +1,15 @@
+{
+    "name": "nwidart/firstmodule",
+    "description": "",
+    "authors": [
+        {
+            "name": "Erwin Nandpersad",
+            "email": "erwin@ermmedia.nl"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Modules\\FirstModule\\": ""
+        }
+    }
+}

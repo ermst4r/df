@@ -1,0 +1,718 @@
+/*
+ jquery custom select plugin
+ http://www.jhnerd.com
+ */
+
+/*
+ * Dependencies:
+ *   jQuery v1.4+
+ *   jQuery UI v1.12.1+
+ */
+
+
+(function($) {
+
+    $.widget('ui.customSelectIT', {
+        options: {
+            allowDuplicates   : true,
+            caseSensitive     : true,
+            fieldName         : 'customselect',
+            placeholderText   : null,   // Sets `placeholder` attr on input field.
+            readOnly          : false,  // Disables editing.
+            removeConfirmation: false,  // Require confirmation to remove tags.
+            tagLimit          : null,   // Max number of tags allowed (null for unlimited).
+
+            // Used for autocomplete, unless you override `autocomplete.source`.
+            availableTags     : ['option1','option2','option3','option4','option5','option6','option7','option8','option9','option10'],
+
+            // The below options are for using a single field instead of several
+            // for our form values.
+            //
+            // When enabled, will use a single hidden field for the form,
+            // rather than one per tag. It will delimit tags in the field
+            // with singleFieldDelimiter.
+            //
+            // The easiest way to use singleField is to just instantiate tag-it
+            // on an INPUT element, in which case singleField is automatically
+            // set to true, and singleFieldNode is set to that element. This
+            // way, you don't need to fiddle with these options.
+            singleField: true,
+
+            // This is just used when preloading data from the field, and for
+            // populating the field with delimited tags as the user adds them.
+            singleFieldDelimiter: ',',
+
+            // Set this to an input DOM node to use an existing form field.
+            // Any text in it will be erased on init. But it will be
+            // populated with the text of tags as they are created,
+            // delimited by singleFieldDelimiter.
+            //
+            // If this is not set, we create an input node for it,
+            // with the name given in settings.fieldName.
+            singleFieldNode: true,
+
+            // Whether to animate tag removals or not.
+            animate: true,
+        },
+        _create: function() {
+            // for handling static scoping inside callbacks
+            var that = this;
+
+            // There are 2 kinds of DOM nodes this widget can be instantiated on:
+            //     1. UL, OL, or some element containing either of these.
+            //     2. INPUT, in which case 'singleField' is overridden to true,
+            //        a UL is created and the INPUT is hidden.
+            if (this.element.is('input')) {
+                this.tagList = $('<ul></ul>').insertAfter(this.element);
+                this.tagButton = $('<button>', {
+                    text: "",
+                    "class": "btn btn-default customselect-button"
+                });
+                this.tagButton.append('<i class="glyphicon glyphicon-plus"></i>');
+                this.tagButton.appendTo( this.tagList );
+                this.tagButton.click(function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    that.createTag(that.options.availableTags[0],'', true);
+                    that.tagButton.css('height',that.tagList.css('height')-20);
+                });
+
+                this.options.singleField = true;
+                this.options.singleFieldNode = this.element;
+                this.element.addClass('customselect-hidden-field');
+            } else {
+                this.tagList = this.element.find('ul, ol').andSelf().last();
+            }
+
+            this.tagInput = $('<div contenteditable="true" ></div>').addClass('ui-widget-content');
+
+            this.tagInput.keyup(function (e) {
+                tags = [];
+                that._updateSingleTagsField(tags);
+            });
+
+            if (this.options.readOnly) this.tagInput.attr('disabled', 'disabled');
+
+            if (this.options.tabIndex) {
+                this.tagInput.attr('tabindex', this.options.tabIndex);
+            }
+
+            if (this.options.placeholderText) {
+                this.tagInput.attr('placeholder', this.options.placeholderText);
+            }
+
+
+            this.tagList
+                .addClass('customselect')
+                .addClass('ui-widget ui-widget-content ui-corner-all')
+                // Create the input field.
+                .append($('<li class="customselect-new customselect-choice"></li>').append(this.tagInput))
+
+            // Single field support.
+            var addedExistingFromSingleFieldNode = false;
+            if (this.options.singleField) {
+                if (this.options.singleFieldNode) {
+                    // Add existing tags from the input field.
+                    var node = $(this.options.singleFieldNode);
+                    var allnodes = node.val();
+
+                    if(allnodes.length == 0) {
+                        this.tagInput.before($('<span>Combine Values</span>').addClass('customeselect-placeholder'));
+                        this.tagInput.parent().addClass('customeselect-showplaceholder');
+                        this.tagInput.keypress(function(e){
+                            $(this).parent().removeClass('customeselect-showplaceholder');
+                            $(this).parent().find('.customeselect-placeholder').remove();
+                        });
+                    }
+
+                    while (allnodes.length > 0) {
+
+                        if(allnodes.indexOf('{') == -1){
+                            this.tagInput.html(allnodes);
+                            break;
+                        }
+                        else if (allnodes.indexOf('{') == 0) {
+                            length_val = allnodes.indexOf('}');
+                            nodeval = allnodes.substr(1,length_val-1);
+                            allnodes = allnodes.substr(length_val+1);
+
+                            that.createTag(nodeval);
+
+                        }else{
+                            position = allnodes.indexOf('{');
+                            length_val = allnodes.indexOf('}') - position;
+                            textval = allnodes.substr(0,position);
+                            nodeval = allnodes.substr(position+1,length_val-1);
+                            allnodes = allnodes.substr(position+length_val+1);
+
+                            that.createTag(nodeval,'',false,textval);
+                        }
+
+                    }
+
+                    //added to ensure that tags are retrieved
+                    addedExistingFromSingleFieldNode = true;
+                } else {
+                    // Create our single field input after our list.
+                    this.options.singleFieldNode = $('<input type="hidden" style="display:none;" value="" name="' + this.options.fieldName + '" />');
+                    this.tagList.after(this.options.singleFieldNode);
+                }
+
+                //added for button
+                this.tagButton.css('height',this.tagList.css('height')-20);
+            }
+        },
+        destroy: function() {
+            $.Widget.prototype.destroy.call(this);
+
+            this.element.unbind('.customselect');
+            this.tagList.unbind('.customselect');
+
+            this.tagList.removeClass([
+                'customselect',
+                'ui-widget',
+                'ui-widget-content',
+                'ui-corner-all',
+                'customselect-hidden-field'
+            ].join(' '));
+
+            if (this.element.is('input')) {
+                this.element.removeClass('customselect-hidden-field');
+                this.tagList.remove();
+            }
+            return this;
+        },
+
+        _effectExists: function(name) {
+            return Boolean($.effects && ($.effects[name] || ($.effects.effect && $.effects.effect[name])));
+        },
+
+        assignedTags: function() {
+            // Returns an array of tag string values
+            var that = this;
+            var tags = [];
+            if (this.options.singleField) {
+                tags = $(this.options.singleFieldNode).val().split(this.options.singleFieldDelimiter);
+                if (tags[0] === '') {
+                    tags = [];
+                }
+            } else {
+                this._tags().each(function() {
+                    tags.push(that.tagLabel(this));
+                });
+            }
+            return tags;
+        },
+
+        _updateSingleTagsField: function(tags) {
+            // Takes a list of tag string values, updates this.options.singleFieldNode.val to the tags delimited by this.options.singleFieldDelimiter
+            var taginfo = '';
+            this.tagList.find('.customselect-choice').each(function (e) {
+                if($(this).hasClass('ui-widget-content'))
+                    taginfo += '{' + $(this).find('.customselect-label :selected').text()+'}';
+                else
+                    taginfo += $(this).find('.ui-widget-content').html();
+            });
+            $(this.options.singleFieldNode).val(taginfo).trigger('change');
+        },
+
+        createTag: function(value, additionalClass, duringInitialization,textset) {
+            //check for removing placeholders
+            if(this.tagInput.parent().hasClass('customeselect-showplaceholder')) {
+                this.tagInput.parent().removeClass('customeselect-showplaceholder');
+                this.tagInput.parent().find('.customeselect-placeholder').remove();
+            }
+
+            var that = this;
+            value = $.trim(value);
+            if(value =='')
+                return;
+
+            var label = $('<select></select>');
+            this.options.availableTags.forEach(function (e) {
+                if(e==value)
+                    label.append('<option selected="selected">'+e+'</option>');
+                else
+                    label.append('<option>'+e+'</option>');
+            });
+            label.addClass('customselect-label');
+            label.change(function (e) {
+                tags = [];
+                that._updateSingleTagsField(tags);
+            });
+
+            // Create tag.
+            var tag = $('<li></li>')
+                .addClass('customselect-choice ui-widget-content ui-state-default ui-corner-all')
+                .addClass(additionalClass)
+                .append(label);
+
+            if (this.options.readOnly){
+                tag.addClass('customselect-choice-read-only');
+            } else {
+                tag.addClass('customselect-choice-editable');
+                // Button for removing the tag.
+                var removeTagIcon = $('<span></span>')
+                    .addClass('ui-icon ui-icon-close');
+                var removeTag = $('<a><span class="text-icon">\xd7</span></a>') // \xd7 is an X
+                    .addClass('customselect-close')
+                    .append(removeTagIcon)
+                    .click(function(e) {
+                        // Removes a tag when the little 'x' is clicked.
+                        that.removeTag(tag);
+                    });
+                tag.append(removeTag);
+            }
+            label.selectmenu({
+                change: function( event, data ) {
+                    that._updateSingleTagsField(tags);
+                }
+            });
+            // Unless options.singleField is set, each tag has a hidden input field inline.
+            if (!this.options.singleField) {
+                var escapedValue = label.html();
+                tag.append('<input type="hidden" value="' + escapedValue + '" name="' + this.options.fieldName + '" class="customselect-hidden-field" />');
+            }
+
+
+            if (this.options.singleField) {
+                var tags = this.assignedTags();
+                tags.push(value);
+                this._updateSingleTagsField(tags);
+            }
+
+            this.tagInput.parent().after(tag);
+            var clone = this.tagInput.parent().clone();
+
+            if(textset != null)
+                this.tagInput.html(textset);
+
+
+            this.tagInput.parent().removeClass('customselect-new').addClass('customselect-old');
+            clone.children('div').html('');
+            this.tagInput = clone.children('div');
+
+            this.tagInput.keyup(function (e) {
+                that._updateSingleTagsField(tags);
+            });
+
+            tag.after(clone);
+            this.tagInput.focus();
+
+            that._updateSingleTagsField(tags);
+        },
+
+        removeTag: function(tag, animate) {
+            var that = this;
+            animate = typeof animate === 'undefined' ? this.options.animate : animate;
+
+            tag = $(tag);
+
+            if (animate) {
+
+                tag.addClass('removed'); // Excludes this tag from _tags.
+                var hide_args = this._effectExists('blind') ? ['blind', {direction: 'horizontal'}, 'fast'] : ['fast'];
+
+                var thisTag = this;
+                hide_args.push(function() {
+                    if(tag.next().hasClass('ui-widget-content')){
+                        //continue
+                    }
+                    else {
+                        if (tag.prev().hasClass('ui-widget-content')) {
+                            //continue
+                        }
+                        else {
+                            tag.next().find('.ui-widget-content').html(tag.prev().find('.ui-widget-content').html() +tag.next().find('.ui-widget-content').html());
+                            tag.prev().remove();
+                            tags = [];
+                            that._updateSingleTagsField(tags);
+                        }
+                    }
+                    tag.remove();
+                    that._updateSingleTagsField(tags);
+                });
+
+                tag.fadeOut('fast').hide.apply(tag, hide_args).dequeue();
+                tags = [];
+                that._updateSingleTagsField(tags);
+
+            } else {
+                if(tag.next().hasClass('ui-widget-content')){
+                    //continue
+                }
+                else {
+                    if (tag.prev().hasClass('ui-widget-content')) {
+                        //continue
+                    }
+                    else {
+                        tag.next().find('.ui-widget-content').html(tag.prev().find('.ui-widget-content').html() +tag.next().find('.ui-widget-content').html());
+                        tag.prev().remove();
+                    }
+                }
+
+                tag.remove();
+                tags = [];
+                that._updateSingleTagsField(tags);
+            }
+
+        },
+    });
+
+})(jQuery);
+
+
+(function($){
+    var _token =  $('meta[name="csrf-token"]').attr('content');
+    var $section = $('section');
+    var feed_id = $('input[name=feed_id]').val();
+    var number_of_ads = parseInt($('input[name=number_of_ads]').val());
+    var number_of_keywords = parseInt($('input[name=number_of_keywords]').val());
+    var number_of_neg_keywords = parseInt($('input[name=number_of_neg_keywords]').val());
+    var adwords_validate_rules = {
+        rules:{
+            campaign_name:{
+                required:true
+            }, adgroup_name: {
+                required:true
+            }, cpc:{
+                required:true,
+                number:true
+            }, daily_budget:{
+                required:true,
+                number:true
+            }
+        }
+    };
+
+
+
+    $.fn.get_es_fields = function (callback) {
+        $.ajax({
+            url:"/adwords_es_fields",
+            method:"POST",
+            data:"feed_id="+feed_id,
+            headers: {
+                'X-CSRF-TOKEN': _token
+            }
+        }).done(function (data) {
+            callback(data);
+        }).fail(function (xhr, status, error) {
+
+        });
+    };
+
+
+    /**
+     * Preload our groups
+     */
+    $.fn.get_es_fields(function (data) {
+        $('#adgroup_name').customSelectIT({'availableTags':data});
+        $('#campaign_name').customSelectIT({'availableTags':data});
+
+        for(var i = 1; i <= number_of_ads; i ++ ) {
+            $('#headline_1_'+i).customSelectIT({'availableTags':data});
+            // $('#headline_2').customSelectIT({'availableTags':data});
+            // $('#description').customSelectIT({'availableTags':data});
+            // $('#path_1').customSelectIT({'availableTags':data});
+            // $('#path_2').customSelectIT({'availableTags':data});
+            // $('#final_url').customSelectIT({'availableTags':data});
+        }
+
+
+    });
+
+
+
+    /**
+     * On load we can have more rules... lets check them out...
+     */
+
+    for(var i =1; i  <= number_of_ads; i++) {
+        adwords_validate_rules['rules']['headline_1['+i+']'] = {
+            minlength: 1,
+            maxlength: 30,
+            required:true
+        };
+
+        adwords_validate_rules['rules']['headline_2['+i+']'] = {
+            minlength: 1,
+            maxlength: 30,
+            required:true
+        };
+        adwords_validate_rules['rules']['description['+i+']'] = {
+            minlength: 1,
+            maxlength: 80,
+            required:true
+        };
+
+        adwords_validate_rules['rules']['path_1['+i+']'] = {
+            minlength: 1,
+            maxlength: 15,
+            required:true
+        };
+
+        adwords_validate_rules['rules']['path_2['+i+']'] = {
+            minlength: 1,
+            maxlength: 15,
+            required:true
+        };
+
+        adwords_validate_rules['rules']['final_url['+i+']'] = {
+            minlength: 1,
+            url: true,
+            required:true
+        };
+    }
+    /**
+     * Lets validate...
+     */
+    var validator =    $("#post_adwords_settings").validate(adwords_validate_rules);
+
+
+
+
+    if($section.is('.adwords_settings')) {
+
+
+
+
+
+
+        $(".adwords_country_select2").select2({
+        });
+
+        $(".adwords_language_select2").select2({
+        });
+
+        if(number_of_keywords === 0) {
+            $("#no_results_keywords").show();
+        }
+
+        if(number_of_neg_keywords === 0 ) {
+            $("#no_results_neg_keywords").show();
+        }
+        /**
+         * Keywords add
+         */
+        $(document).on('click','.adwords_new_keyword',function (e) {
+            number_of_keywords ++;
+            validator.destroy();
+            $("#no_results_keywords").hide();
+            $.fn.ajax_get_ad_template('ajax_get_keywords',number_of_keywords,function (data) {
+                adwords_validate_rules['rules']['keyword['+number_of_keywords+']'] = {
+                    required:true
+                };
+                $('#append_keywords').append(data);
+                validator = $("#post_adwords_settings").validate(adwords_validate_rules);
+            });
+        });
+
+
+        /**
+         * Add negative keyword
+         */
+        $(document).on('click','.adwords_negative_keyword',function (e) {
+            number_of_neg_keywords ++;
+            $("#no_results_neg_keywords").hide();
+            validator.destroy();
+            
+            $.fn.ajax_get_ad_template('ajax_keywords_negative',number_of_neg_keywords,function (data) {
+                adwords_validate_rules['rules']['keyword_negative['+number_of_neg_keywords+']'] = {
+                    required:true
+                };
+                $('#append_neg_keywords').append(data);
+                validator = $("#post_adwords_settings").validate(adwords_validate_rules);
+            });
+        });
+
+
+        /**
+         * Remove negative keyword
+         */
+        $(document).on('click','.remove_negative_keyword',function (e) {
+            var keyword_item_id = $(this).attr('data-keyword_item_id');
+            validator.destroy();
+            $("#keyword_container_negative_"+keyword_item_id).remove();
+            delete adwords_validate_rules['rules']['keyword_negative['+keyword_item_id+']'];
+            validator = $("#post_adwords_settings").validate(adwords_validate_rules);
+            number_of_neg_keywords --;
+            if(number_of_neg_keywords === 0) {
+                $("#no_results_neg_keywords").show();
+            }
+        });
+
+
+
+        /**
+         * Keyword remove
+         */
+        $(document).on('click','.remove_keyword',function (e) {
+            var keyword_item_id = $(this).attr('data-keyword_item_id');
+            $("#keyword_container_"+keyword_item_id).remove();
+            validator.destroy();
+            number_of_keywords --;
+            delete  adwords_validate_rules['rules']['keyword['+keyword_item_id+']'];
+            validator = $("#post_adwords_settings").validate(adwords_validate_rules);
+            if(number_of_keywords === 0) {
+                $("#no_results_keywords").show();
+
+
+            }
+        });
+
+
+
+
+        /**
+         * add a new adwords template
+         */
+        $(document).on('click','.add_template',function (e) {
+
+            validator.destroy();
+            number_of_ads ++;
+            $.fn.ajax_get_ad_template('ajax_get_words_template',number_of_ads,function (data) {
+
+            adwords_validate_rules['rules']['headline_1['+number_of_ads+']'] = {
+                minlength: 1,
+                maxlength: 30,
+                required:true
+            };
+
+            adwords_validate_rules['rules']['headline_2['+number_of_ads+']'] = {
+                minlength: 1,
+                maxlength: 30,
+                required:true
+            };
+            adwords_validate_rules['rules']['description['+number_of_ads+']'] = {
+                minlength: 1,
+                maxlength: 80,
+                required:true
+            };
+
+            adwords_validate_rules['rules']['path_1['+number_of_ads+']'] = {
+                minlength: 1,
+                maxlength: 15,
+                required:true
+            };
+
+            adwords_validate_rules['rules']['path_2['+number_of_ads+']'] = {
+                minlength: 1,
+                maxlength: 15,
+                required:true
+            };
+
+            adwords_validate_rules['rules']['final_url['+number_of_ads+']'] = {
+                minlength: 1,
+                url: true,
+                required:true
+            };
+
+            $('.append_ads').append(data);
+
+           validator = $("#post_adwords_settings").validate(adwords_validate_rules);
+
+
+            });
+        });
+
+
+        /**
+         * Adwords kop 1
+         */
+        $(document).on('keyup','.adwords_kop_1',function () {
+           var item_id = $(this).attr('data-item_id');
+           $("#ad_title_1_"+item_id).html($(this).val());
+
+        });
+
+        /**
+         * Adwords Kop 2
+         */
+        $(document).on('keyup','.adwords_kop_2',function () {
+            var item_id = $(this).attr('data-item_id');
+            $("#ad_title_2_"+item_id).html($(this).val());
+
+        });
+
+
+        /**
+         * Adwords description
+         */
+        $(document).on('keyup','.adwords_description',function () {
+            var item_id = $(this).attr('data-item_id');
+            $("#ad_description_"+item_id).html($(this).val());
+
+        });
+
+
+        /**
+         * Pad 1
+         */
+        $(document).on('keyup','.ad_pad_1',function () {
+            var item_id = $(this).attr('data-item_id');
+            $("#ad_path_1"+item_id).html("/"+$(this).val());
+
+        });
+
+        /**
+         * Ad pad
+         */
+
+        $(document).on('keyup','.ad_pad_1',function () {
+            var item_id = $(this).attr('data-item_id');
+            $("#ad_path_1"+item_id).html("/"+$(this).val());
+
+        });
+
+        /**
+         * Ad pad 2
+         */
+
+        $(document).on('keyup','.ad_pad_2',function () {
+            var item_id = $(this).attr('data-item_id');
+            $("#ad_path_2"+item_id).html("/"+$(this).val());
+
+        });
+
+
+
+
+        /**
+         * Get ad template
+         * @param callback
+         */
+
+        $.fn.ajax_get_ad_template = function (uri,identifier,callback) {
+            $.ajax({
+                url:"/"+uri+"/"+feed_id,
+                method:"POST",
+                data:"item_id="+identifier,
+                headers: {
+                    'X-CSRF-TOKEN': _token
+                }
+            }).done(function (data) {
+                callback(data);
+            }).fail(function (xhr, status, error) {
+
+            });
+        };
+
+
+        /**
+         * Get es fields
+         * @param callback
+         */
+
+
+
+
+
+
+
+
+
+    }
+
+})(jQuery);
+

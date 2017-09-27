@@ -1,0 +1,28 @@
+.error {color:red; font-weight: normal;}
+.form-control.input-lg.error {color:red; font-weight: normal;}
+.info-box-number.box_topping {margin-top:20px;}
+.format_margin {margin-left:50px; margin-top:20px; width: 950px;}
+.url_parser { display: none;}
+.import_type { font-weight: bold; text-transform: uppercase; }
+.rules-spacer { margin-left:20px; padding : 25px; border-left:2px solid darkgreen;}
+.rules-top { margin-top: 20px;}
+.rules-create-rule-field { margin-bottom: 20px;}
+.form-control.rules-split-textfield-margin{ width: 70px; height: 30px;}
+.rules_create_rule_small { font-size:10px; margin-top:20px;}
+.search_term_spreadsheet{text-decoration: underline; cursor: pointer;}
+.hot-container { width: auto; height: 1200px;overflow: hidden;margin-top:-20px;}
+.top_rules {margin-top:-20px;  padding: 15px; }
+.if-button{border:none;}
+ul.dfbuilder_breadcrumb {  background: white; margin-bottom: 40px; }
+.label_channel_select{margin-bottom:50px;}
+.label_channel_picker_width{width: 1000px;}
+.adwords_margin{margin-top:20px;}
+.adwords_container{border:1px solid #d7d7d7; width: 240px; min-height: 78px; height: 100%; padding:10px; margin-top:30px;}
+.adwords_headline{margin-top:10px;}
+a.adwords_headline{font-size:18px; color:#1a0dab; }
+a:hover.adwords_headline{font-size:18px; color:#1a0dab;}
+.adwords_url{color:#006621; font-size:13px;}
+.adwords_description{ font-size:13px; color:#545454;}
+.clickable-row{cursor: pointer;}
+
+.accordion_black{color:black;}
