@@ -138,7 +138,8 @@ Full instructions how to configure see here (https://github.com/nikolajlovenhard
 See instructions over here
 https://www.elastic.co/guide/en/elasticsearch/reference/current/deb.html
 
-
+# Docker image
+- coming soon!! :)
 
 # Vagrant configuration PHP 5.x
 
