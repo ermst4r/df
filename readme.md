@@ -1,9 +1,12 @@
 # DFbuilder.com
+
 <p align="center">
+<a href="http://www.dfbuilder.com">
 <img src="http://dfbuilder.com/wp-content/uploads/2017/09/Logo_DFBuilder_transarant-02.png" alt="">
+</a>
 </p>
 
-DFbuilder.com is an open-source feed management tool. 
+DFbuilder.com is an open-source feed management tool to perform rules on a <a href="http://www.dfbuilder.com">datafeed</a>. 
 
 You can apply different rules and categorizations to a the productfeed. 
 
