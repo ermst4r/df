@@ -99,7 +99,7 @@ define('DFBUILDER_DEFAULT_ES_LIMIT',1000);
  * Channels will be cronned and consumed from an external source
  * Please define over here the channel consumer url
  */
-define('DFBUILDER_CHANNEL_CONSUMER_URL','http://agd-plugin.com/apimock/api.php');
+define('DFBUILDER_CHANNEL_CONSUMER_URL','http://dfbuilder.com/api.php');
 
 /**
  * Please define here the your default country
@@ -119,7 +119,7 @@ define('DFBUILDER_CHANNEL_FINALIZE_SENSITIVITY',70);
 /**
  * Version DF builder
  */
-define('DFBUILDER_VERSION','RC 1.0');
+define('DFBUILDER_VERSION','RC 2.0');
 
 
 /**

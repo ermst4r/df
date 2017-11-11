@@ -2,6 +2,132 @@
 
 namespace App\Providers;
 
+use App\Entity\AdCampaignPreview;
+use App\Entity\AdgroupPreview;
+use App\Entity\AdsKeywordPreview;
+use App\Entity\AdsPreview;
+use App\Entity\AdwordsAd;
+use App\Entity\AdwordsConfiguration;
+use App\Entity\Adwordsfeed;
+use App\Entity\AdwordsGoogleCountries;
+use App\Entity\AdwordsGoogleLanguages;
+use App\Entity\AdwordsKeyword;
+use App\Entity\AdwordsRevision;
+use App\Entity\AdwordsTarget;
+use App\Entity\Bolads;
+use App\Entity\BoladsPreview;
+use App\Entity\Bolfeed;
+use App\Entity\CategoryBol;
+use App\Entity\CategoryChannel;
+use App\Entity\CategoryFilter;
+use App\Entity\Channel;
+use App\Entity\ChannelCountry;
+use App\Entity\ChannelCustomMapping;
+use App\Entity\ChannelFeed;
+use App\Entity\ChannelFeedMapping;
+use App\Entity\ChannelMapping;
+use App\Entity\ChannelType;
+use App\Entity\CompositeMapping;
+use App\Entity\Csvmapping;
+use App\Entity\CustomMapping;
+use App\Entity\Dflogger;
+use App\Entity\Feed;
+use App\Entity\FeedLog;
+use App\Entity\FieldToMap;
+use App\Entity\Repository\AdCampaignPreviewRepository;
+use App\Entity\Repository\AdgroupPreviewRepository;
+use App\Entity\Repository\AdsKeywordPreviewRepository;
+use App\Entity\Repository\AdsPreviewRepository;
+use App\Entity\Repository\AdwordsAdRepository;
+use App\Entity\Repository\AdwordsConfigurationRepository;
+use App\Entity\Repository\AdwordsfeedRepository;
+use App\Entity\Repository\AdwordsGoogleCountriesRepository;
+use App\Entity\Repository\AdwordsGoogleLanguagesRepository;
+use App\Entity\Repository\AdwordsKeywordRepository;
+use App\Entity\Repository\AdwordsRevisionRepository;
+use App\Entity\Repository\AdwordsTargetRepository;
+use App\Entity\Repository\BolAdsPreviewRepository;
+use App\Entity\Repository\BolAdsRepository;
+use App\Entity\Repository\BolFeedRepository;
+use App\Entity\Repository\CategoryBolRepository;
+use App\Entity\Repository\CategoryChannelRepository;
+use App\Entity\Repository\CategoryFilterRepository;
+use App\Entity\Repository\ChannelCountryRepository;
+use App\Entity\Repository\ChannelCustomMappingRepository;
+use App\Entity\Repository\ChannelFeedMappingRepository;
+use App\Entity\Repository\ChannelFeedRepository;
+use App\Entity\Repository\ChannelMappingRepository;
+use App\Entity\Repository\ChannelRepository;
+use App\Entity\Repository\ChannelTypeRepository;
+use App\Entity\Repository\CompositeMappingRepository;
+use App\Entity\Repository\Contract\iAdCampaignPreview;
+use App\Entity\Repository\Contract\iAdgroupPreview;
+use App\Entity\Repository\Contract\iAdsKeywordPreview;
+use App\Entity\Repository\Contract\iAdsPreview;
+use App\Entity\Repository\Contract\iAdwordsAd;
+use App\Entity\Repository\Contract\iAdwordsConfiguration;
+use App\Entity\Repository\Contract\iAdwordsfeed;
+use App\Entity\Repository\Contract\iAdwordsGoogleCountries;
+use App\Entity\Repository\Contract\iAdwordsGoogleLanguages;
+use App\Entity\Repository\Contract\iAdwordsKeyword;
+use App\Entity\Repository\Contract\iAdwordsRevision;
+use App\Entity\Repository\Contract\iAdwordsTarget;
+use App\Entity\Repository\Contract\iBolAds;
+use App\Entity\Repository\Contract\iBolAdsPreview;
+use App\Entity\Repository\Contract\iBolFeed;
+use App\Entity\Repository\Contract\iCategoryBol;
+use App\Entity\Repository\Contract\iCategoryChannel;
+use App\Entity\Repository\Contract\iCategoryFilter;
+use App\Entity\Repository\Contract\iChannel;
+use App\Entity\Repository\Contract\iChannelCountry;
+use App\Entity\Repository\Contract\iChannelCustomMapping;
+use App\Entity\Repository\Contract\iChannelFeed;
+use App\Entity\Repository\Contract\iChannelFeedMapping;
+use App\Entity\Repository\Contract\iChannelMapping;
+use App\Entity\Repository\Contract\iChannelType;
+use App\Entity\Repository\Contract\iCompositeMapping;
+use App\Entity\Repository\Contract\iCsvMapping;
+use App\Entity\Repository\Contract\iCustomMapping;
+use App\Entity\Repository\Contract\iDflogger;
+use App\Entity\Repository\Contract\iFeed;
+use App\Entity\Repository\Contract\iFeedLog;
+use App\Entity\Repository\Contract\iFieldToMap;
+use App\Entity\Repository\Contract\iRevision;
+use App\Entity\Repository\Contract\iRule;
+use App\Entity\Repository\Contract\iRuleAdwords;
+use App\Entity\Repository\Contract\iRuleBol;
+use App\Entity\Repository\Contract\iRuleChannel;
+use App\Entity\Repository\Contract\iRuleCondition;
+use App\Entity\Repository\Contract\iSpreadsheetHeader;
+use App\Entity\Repository\Contract\iStore;
+use App\Entity\Repository\Contract\iTaskLog;
+use App\Entity\Repository\Contract\iXmlMapping;
+use App\Entity\Repository\CsvMappingRepository;
+use App\Entity\Repository\CustomMappingRepository;
+use App\Entity\Repository\DfloggerRepository;
+use App\Entity\Repository\FeedLogRepository;
+use App\Entity\Repository\FeedRepository;
+use App\Entity\Repository\FieldToMapRepository;
+use App\Entity\Repository\RevisionRepository;
+use App\Entity\Repository\RuleAdwordsRepository;
+use App\Entity\Repository\RuleBolRepository;
+use App\Entity\Repository\RuleConditionRepository;
+use App\Entity\Repository\RuleRepository;
+use App\Entity\Repository\RulesChannelRepository;
+use App\Entity\Repository\SpreadsheetHeaderRepository;
+use App\Entity\Repository\StoreRepository;
+use App\Entity\Repository\TasklogRepository;
+use App\Entity\Repository\XmlMappingRepository;
+use App\Entity\Revision;
+use App\Entity\Rule;
+use App\Entity\RuleAdwords;
+use App\Entity\RuleBol;
+use App\Entity\RuleCondition;
+use App\Entity\RulesChannel;
+use App\Entity\SpreadsheetHeader;
+use App\Entity\Store;
+use App\Entity\Tasklog;
+use App\Entity\Xmlmapping;
 use Illuminate\Support\ServiceProvider;
 
 class RepoServiceProvider extends ServiceProvider
@@ -23,52 +149,190 @@ class RepoServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
-        $this->bindStores();
-        $this->bindFeed();
-        $this->bindFieldToMap();
-        $this->bindCsvMapping();
-        $this->bindXmlMapping();
-        $this->bindCategoryFilter();
-        $this->bindCategory();
-        $this->bindRules();
-        $this->bindRuleConditions();
-        $this->bindCompositeMapping();
-        $this->bindSpreadsheetHeaders();
-        $this->bindRevision();
-        $this->bindFeedLog();
-        $this->bindChannelFeed();
-        $this->bindChannel();
-        $this->bindChannelType();
-        $this->bindChannelCountry();
-        $this->bindChannelMapping();
-        $this->bindChannelFeed();
-        $this->bindChannelFeedMapping();
-        $this->bindChannelCustomMapping();
-        $this->bindAdwordsAd();
-        $this->bindAdwordsConfiguration();
-        $this->bindAdwordsConfiguration();
-        $this->bindAdwordsFeed();
-        $this->bindAdwordsKeyword();
-        $this->bindAdwordsTarget();
-        $this->bindAdgroupPreview();
-        $this->bindAdCampaignPreview();
-        $this->bindAdsPreview();
-        $this->bindRuleChannel();
-        $this->bindRuleAdwords();
-        $this->bindAdwordsRevision();
-        $this->bindAdKeywordPreview();
-        $this->bindAdwordsCountries();
-        $this->bindAdwordsLanguages();
-        $this->bindCategoryChannel();
-        $this->bindBolFeed();
-        $this->bindRuleBol();
-        $this->bindCategoryBol();
-        $this->bindDfLogger();
-        $this->bindTaskLog();
-        $this->bindBolAds();
-        $this->bindBolAdsPreview();
-        $this->bindCustomMapping();
+        $this->app->singleton(iFeed::class, function() {
+            return new FeedRepository(new Feed());
+        });
+
+        $this->app->singleton(iStore::class, function() {
+            return new StoreRepository(new Store());
+        });
+
+        $this->app->singleton(iFieldToMap::class, function() {
+            return new FieldToMapRepository(new FieldToMap());
+        });
+
+        $this->app->singleton(iCsvMapping::class, function() {
+            return new CsvMappingRepository(new Csvmapping());
+        });
+
+        $this->app->singleton(iXmlMapping::class, function() {
+            return new XmlMappingRepository(new Xmlmapping());
+        });
+
+        $this->app->singleton(iCategoryFilter::class, function() {
+            return new CategoryFilterRepository(new CategoryFilter());
+        });
+
+        $this->app->singleton(iRule::class, function() {
+            return new RuleRepository(new Rule());
+        });
+
+        $this->app->singleton(iRuleCondition::class, function() {
+            return new RuleConditionRepository(new RuleCondition());
+        });
+
+        $this->app->singleton(iCompositeMapping::class, function() {
+            return new CompositeMappingRepository(new CompositeMapping());
+        });
+
+        $this->app->singleton(iSpreadsheetHeader::class, function() {
+            return new SpreadsheetHeaderRepository(new SpreadsheetHeader());
+        });
+
+        $this->app->singleton(iRevision::class, function() {
+            return new RevisionRepository(new Revision());
+        });
+
+        $this->app->singleton(iRevision::class, function() {
+            return new RevisionRepository(new Revision());
+        });
+
+        $this->app->singleton(iFeedLog::class, function() {
+            return new FeedLogRepository(new FeedLog());
+        });
+
+        $this->app->singleton(iChannelFeed::class, function() {
+            return new ChannelFeedRepository(new ChannelFeed());
+        });
+
+        $this->app->singleton(iChannel::class, function() {
+            return new ChannelRepository(new Channel());
+        });
+
+
+        $this->app->singleton(iChannelType::class, function() {
+            return new ChannelTypeRepository(new ChannelType());
+        });
+
+
+        $this->app->singleton(iChannelCountry::class, function() {
+            return new ChannelCountryRepository(new ChannelCountry());
+        });
+
+
+        $this->app->singleton(iChannelMapping::class, function() {
+            return new ChannelMappingRepository(new ChannelMapping());
+        });
+
+
+        $this->app->singleton(iChannelFeed::class, function() {
+            return new ChannelFeedRepository(new ChannelFeed());
+        });
+
+
+        $this->app->singleton(iChannelFeedMapping::class, function() {
+            return new ChannelFeedMappingRepository(new ChannelFeedMapping());
+        });
+
+        $this->app->singleton(iChannelCustomMapping::class, function() {
+            return new ChannelCustomMappingRepository(new ChannelCustomMapping());
+        });
+
+        $this->app->singleton(iAdwordsAd::class, function() {
+            return new AdwordsAdRepository(new AdwordsAd());
+        });
+
+        $this->app->singleton(iAdwordsConfiguration::class, function() {
+            return new AdwordsConfigurationRepository(new AdwordsConfiguration());
+        });
+
+        $this->app->singleton(iAdwordsfeed::class, function() {
+            return new AdwordsfeedRepository(new Adwordsfeed());
+        });
+
+        $this->app->singleton(iAdwordsKeyword::class, function() {
+            return new AdwordsKeywordRepository(new AdwordsKeyword());
+        });
+
+        $this->app->singleton(iAdwordsTarget::class, function() {
+            return new AdwordsTargetRepository(new AdwordsTarget());
+        });
+
+        $this->app->singleton(iAdgroupPreview::class, function() {
+            return new AdgroupPreviewRepository(new AdgroupPreview());
+        });
+
+        $this->app->singleton(iAdCampaignPreview::class, function() {
+            return new AdCampaignPreviewRepository(new AdCampaignPreview());
+        });
+
+
+        $this->app->singleton(iAdsPreview::class, function() {
+            return new AdsPreviewRepository(new AdsPreview());
+        });
+
+        $this->app->singleton(iRuleChannel::class, function() {
+            return new RulesChannelRepository(new RulesChannel());
+        });
+
+        $this->app->singleton(iRuleAdwords::class, function() {
+            return new RuleAdwordsRepository(new RuleAdwords());
+        });
+
+        $this->app->singleton(iAdwordsRevision::class, function() {
+            return new AdwordsRevisionRepository(new AdwordsRevision());
+        });
+
+        $this->app->singleton(iAdsKeywordPreview::class, function() {
+            return new AdsKeywordPreviewRepository(new AdsKeywordPreview());
+        });
+
+        $this->app->singleton(iAdwordsGoogleCountries::class, function() {
+            return new AdwordsGoogleCountriesRepository(new AdwordsGoogleCountries());
+        });
+
+        $this->app->singleton(iAdwordsGoogleLanguages::class, function() {
+            return new AdwordsGoogleLanguagesRepository(new AdwordsGoogleLanguages());
+        });
+
+
+        $this->app->singleton(iCategoryChannel::class, function() {
+            return new CategoryChannelRepository(new CategoryChannel());
+        });
+
+        $this->app->singleton(iBolFeed::class, function() {
+            return new BolFeedRepository(new Bolfeed());
+        });
+
+        $this->app->singleton(iRuleBol::class, function() {
+            return new RuleBolRepository(new RuleBol());
+        });
+
+        $this->app->singleton(iCategoryBol::class, function() {
+            return new CategoryBolRepository(new CategoryBol());
+        });
+
+        $this->app->singleton(iDflogger::class, function() {
+            return new DfloggerRepository(new Dflogger());
+        });
+
+        $this->app->singleton(iTaskLog::class, function() {
+            return new TasklogRepository(new Tasklog());
+        });
+
+
+        $this->app->singleton(iBolAds::class, function() {
+            return new BolAdsRepository(new Bolads());
+        });
+
+        $this->app->singleton(iBolAdsPreview::class, function() {
+            return new BolAdsPreviewRepository(new BoladsPreview());
+        });
+
+        $this->app->singleton(iCustomMapping::class, function() {
+            return new CustomMappingRepository(new CustomMapping());
+        });
+
 
     }
 

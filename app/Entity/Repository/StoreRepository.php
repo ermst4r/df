@@ -5,14 +5,10 @@ namespace App\Entity\Repository;
 use App\Entity\Repository\Contract\iStore;
 use App\Entity\Store;
 
-class StoreRepository  implements iStore  {
+class StoreRepository extends Repository  implements iStore  {
 
 
-    private $store;
-    public function __construct(Store $store)
-    {
-        $this->store =$store;
-    }
+   
 
     /**
      * @param array $data
@@ -20,9 +16,9 @@ class StoreRepository  implements iStore  {
     public function createStore($data = array(),$id = 0)
     {
         if($id == 0 ) {
-            $this->store->create($data);
+            $this->model->create($data);
         } else {
-            $this->store->find($id)->update($data);
+            $this->model->find($id)->update($data);
         }
 
 
@@ -35,19 +31,19 @@ class StoreRepository  implements iStore  {
      */
     public function getAllStores()
     {
-        return $this->store->all();
+        return $this->model->all();
 
     }
 
 
     /**
-     * Get the store
+     * Get the model
      * @param $id
      * @return mixed
      */
     public function getStore($id)
     {
-        return $this->store->findOrFail($id);
+        return $this->model->findOrFail($id);
     }
 
 

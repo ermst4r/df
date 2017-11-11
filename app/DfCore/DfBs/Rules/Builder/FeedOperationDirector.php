@@ -21,13 +21,6 @@ use App\Entity\Rule;
  *     along with Dfbuilder.  If not, see <http://www.gnu.org/licenses/>
  */
 
-/**
- * Class RuleDirector
- * @package App\DfCore\DfBs\Rules\Builder
- * @author: Erwin Nandpersad
- * @website: www.ermmedia.nl
- * @email: erwin@ermmedia.nl
- */
 class FeedOperationDirector
 {
 

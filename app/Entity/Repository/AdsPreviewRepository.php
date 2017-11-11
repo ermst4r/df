@@ -8,27 +8,17 @@ use App\Entity\AdwordsAd;
 use App\Entity\Repository\Contract\iAdsPreview;
 use DB;
 
-class AdsPreviewRepository implements iAdsPreview
+class AdsPreviewRepository extends Repository implements iAdsPreview
 {
 
-    private $ads_preview;
-
-    /**
-     * AdwordsAdRepository constructor.
-     * @param AdwordsAd $adwords_ad
-     */
-    public function __construct(AdsPreview $ads_preview)
-    {
-        $this->ads_preview = $ads_preview;
-    }
-
+  
     /**
      * @param $fk_adwords_feed_id
      * @return mixed
      */
     public function countPreviewAds($fk_adwords_feed_id)
     {
-        return $this->ads_preview
+        return $this->model
             ->where('fk_adwords_feed_id',$fk_adwords_feed_id)
             ->count();
     }
@@ -40,7 +30,7 @@ class AdsPreviewRepository implements iAdsPreview
     public function getAdsToDelete($fk_adwords_feed_id)
     {
 
-        $table = $this->ads_preview->getTable();
+        $table = $this->model->getTable();
         return DB::table($table)
             ->join('adgroup_preview', $table.'.fk_adgroup_preview_id', '=', 'adgroup_preview.id')
             ->select(DB::RAW($table.'.adwords_id AS ads_adwords_id,adgroup_preview.adwords_id AS adgroup_adwords_id, '.$table.'.id  AS id'))
@@ -56,7 +46,7 @@ class AdsPreviewRepository implements iAdsPreview
      */
     public function removeSingleAd($id)
     {
-        return $this->ads_preview->where('id',$id)->delete();
+        return $this->model->where('id',$id)->delete();
     }
 
 
@@ -68,7 +58,7 @@ class AdsPreviewRepository implements iAdsPreview
      */
     public function getValidActiveAdwordsAds($fk_campaigns_preview_id, $fk_adgroup_preview_id, $is_valid=true)
     {
-        return $this->ads_preview
+        return $this->model
             ->where('fk_campaigns_preview_id',$fk_campaigns_preview_id)
             ->where('fk_adgroup_preview_id',$fk_adgroup_preview_id)
             ->where('is_valid',$is_valid)
@@ -82,7 +72,7 @@ class AdsPreviewRepository implements iAdsPreview
      */
     public function getAd($id)
     {
-        return $this->ads_preview->findOrFail($id);
+        return $this->model->findOrFail($id);
     }
 
 
@@ -94,10 +84,10 @@ class AdsPreviewRepository implements iAdsPreview
     {
 
         if($fk_campaigns_preview_id > 0 && $fk_adgroup_preview_id > 0) {
-            $ads =  $this->ads_preview->where('fk_adwords_feed_id',$fk_adwords_feed_id)->where('fk_campaigns_preview_id',$fk_campaigns_preview_id)
+            $ads =  $this->model->where('fk_adwords_feed_id',$fk_adwords_feed_id)->where('fk_campaigns_preview_id',$fk_campaigns_preview_id)
             ->where('fk_adgroup_preview_id',$fk_adgroup_preview_id)->get();
         } else {
-            $ads =  $this->ads_preview->where('fk_adwords_feed_id',$fk_adwords_feed_id)->get();
+            $ads =  $this->model->where('fk_adwords_feed_id',$fk_adwords_feed_id)->get();
         }
         
         $data['data'] = [];
@@ -122,7 +112,7 @@ class AdsPreviewRepository implements iAdsPreview
      */
     public function removeAdByProductId($id,$fk_adwords_ad_id)
     {
-        $this->ads_preview
+        $this->model
             ->where('generated_id',$id)
             ->where('fk_adwords_ad_id',$fk_adwords_ad_id)->
             delete();
@@ -137,7 +127,7 @@ class AdsPreviewRepository implements iAdsPreview
      */
     public function updateAdByMultipleId($data,$id,$fk_adwords_ad_id)
     {
-       return  $this->ads_preview->where('id',$id)->where('fk_adwords_ad_id',$fk_adwords_ad_id)->update($data);
+       return  $this->model->where('id',$id)->where('fk_adwords_ad_id',$fk_adwords_ad_id)->update($data);
     }
 
 
@@ -148,9 +138,9 @@ class AdsPreviewRepository implements iAdsPreview
     {
 
         if($id == 0 ) {
-            return $this->ads_preview->create($data);
+            return $this->model->create($data);
         } else {
-            $this->ads_preview->where('id',$id)->update($data);
+            $this->model->where('id',$id)->update($data);
         }
 
     }
@@ -163,7 +153,7 @@ class AdsPreviewRepository implements iAdsPreview
      */
     public function getAdsFromCampaignAndAdgroup($fk_campaigns_preview_id, $fk_adgroup_preview_id)
     {
-        return $this->ads_preview   ->where('fk_campaigns_preview_id',$fk_campaigns_preview_id)
+        return $this->model   ->where('fk_campaigns_preview_id',$fk_campaigns_preview_id)
                                     ->where('fk_adgroup_preview_id',$fk_adgroup_preview_id)
                                     ->get();
     }
@@ -176,7 +166,7 @@ class AdsPreviewRepository implements iAdsPreview
      */
     public function getAdsApiErrors($fk_campaigns_preview_id, $fk_adgroup_preview_id)
     {
-        return $this->ads_preview   ->where('fk_campaigns_preview_id',$fk_campaigns_preview_id)
+        return $this->model   ->where('fk_campaigns_preview_id',$fk_campaigns_preview_id)
             ->where('fk_adgroup_preview_id',$fk_adgroup_preview_id)
             ->where('adwords_api_message','!=','')
             ->get();
@@ -191,7 +181,7 @@ class AdsPreviewRepository implements iAdsPreview
      */
     public function getPreviewAdWordsOptions($fk_campaigns_preview_id,$fk_adgroup_preview_id,$fk_adwords_ad_id)
     {
-        $results =  $this->ads_preview
+        $results =  $this->model
             ->where('fk_campaigns_preview_id',$fk_campaigns_preview_id)
             ->where('fk_adgroup_preview_id',$fk_adgroup_preview_id)
             ->where('fk_adwords_ad_id',$fk_adwords_ad_id)
@@ -219,7 +209,7 @@ class AdsPreviewRepository implements iAdsPreview
     {
 
 
-       return $this->ads_preview
+       return $this->model
                     ->where('fk_campaigns_preview_id',$fk_campaigns_preview_id)
                     ->where('fk_adgroup_preview_id',$fk_adgroup_preview_id)
                     ->where('fk_adwords_ad_id',$fk_adwords_ad_id)
@@ -237,7 +227,7 @@ class AdsPreviewRepository implements iAdsPreview
      */
     public function removeAdPreview($id)
     {
-        $this->ads_preview->where('id',$id)->delete();
+        $this->model->where('id',$id)->delete();
     }
 
     /**
@@ -246,7 +236,7 @@ class AdsPreviewRepository implements iAdsPreview
      */
     public function removeInvalidAds($fk_campaigns_preview_id)
     {
-        return $this->ads_preview->where('fk_campaigns_preview_id',$fk_campaigns_preview_id)->where('is_valid',false)->delete();
+        return $this->model->where('fk_campaigns_preview_id',$fk_campaigns_preview_id)->where('is_valid',false)->delete();
     }
 
 }

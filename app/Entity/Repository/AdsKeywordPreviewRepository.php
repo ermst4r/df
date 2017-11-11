@@ -11,19 +11,10 @@ use DB;
 use App\Entity\Repository\Contract\iAdsKeywordPreview;
 
 
-class AdsKeywordPreviewRepository implements iAdsKeywordPreview
+class AdsKeywordPreviewRepository extends Repository implements iAdsKeywordPreview
 {
 
-    private $adwords_keyword;
-
-    /**
-     * AdwordsAdRepository constructor.
-     * @param AdwordsAd $adwords_ad
-     */
-    public function __construct(AdsKeywordPreview $adwords_keyword)
-    {
-        $this->adwords_keyword = $adwords_keyword;
-    }
+ 
 
     /**
      * @param $data
@@ -33,9 +24,9 @@ class AdsKeywordPreviewRepository implements iAdsKeywordPreview
     public function createPreview($data, $id = 0)
     {
         if($id == 0 ) {
-          return  $this->adwords_keyword->create($data);
+          return  $this->model->create($data);
         } else {
-            return $this->adwords_keyword->where('id',$id)->update($data);
+            return $this->model->where('id',$id)->update($data);
         }
 
     }
@@ -43,11 +34,11 @@ class AdsKeywordPreviewRepository implements iAdsKeywordPreview
     /**
      * @param $fk_adgroup_preview_id
      * @param $formatted_keyword
-     * @return bool
+     * @return mixed
      */
     public function keywordExistsInPreview($fk_adgroup_preview_id, $formatted_keyword,$keyword_type = AdwordsOptions::NORMAL_KEYWORD)
     {
-        return $this->adwords_keyword
+        return $this->model
             ->where('fk_adgroup_preview_id',$fk_adgroup_preview_id)
             ->where('formatted_keyword',$formatted_keyword)
             ->where('keyword_type',$keyword_type)
@@ -58,7 +49,7 @@ class AdsKeywordPreviewRepository implements iAdsKeywordPreview
 
     public function setKeywordDeletedFromKeyword($keyword_id)
     {
-        return $this->adwords_keyword
+        return $this->model
             ->where('fk_adwords_keyword_id',$keyword_id)
             ->update(['delete_keyword'=>true]);
     }
@@ -69,7 +60,7 @@ class AdsKeywordPreviewRepository implements iAdsKeywordPreview
      */
     public function setKeywordAsDeleteFromUpdate($fk_adgroup_preview_id)
     {
-        return $this->adwords_keyword
+        return $this->model
             ->where('fk_adgroup_preview_id',$fk_adgroup_preview_id)
             ->update(['delete_keyword'=>true]);
     }
@@ -84,14 +75,14 @@ class AdsKeywordPreviewRepository implements iAdsKeywordPreview
     {
 
         if($adwords_id >0 ) {
-            return $this->adwords_keyword
+            return $this->model
                 ->where('fk_adwords_feed_id',$fk_adwords_feed_id)
                 ->where('adwords_id','>',0)
 
                 ->where('delete_keyword','=',true)
                 ->get();
         } else {
-           return $this->adwords_keyword
+           return $this->model
                ->where('fk_adwords_feed_id',$fk_adwords_feed_id)
                ->where('adwords_id',0)
                ->where('delete_keyword','=',true)
@@ -107,7 +98,7 @@ class AdsKeywordPreviewRepository implements iAdsKeywordPreview
      */
     public function getKeyWordsFromMainKeyword($id)
     {
-        return $this->adwords_keyword->where('fk_adwords_keyword_id',$id)->get();
+        return $this->model->where('fk_adwords_keyword_id',$id)->get();
     }
 
     /**
@@ -115,7 +106,7 @@ class AdsKeywordPreviewRepository implements iAdsKeywordPreview
      */
     public function removePreviewKeyword($id)
     {
-        return $this->adwords_keyword->where('id',$id)->delete();
+        return $this->model->where('id',$id)->delete();
     }
 
     /**
@@ -124,7 +115,7 @@ class AdsKeywordPreviewRepository implements iAdsKeywordPreview
      */
     public function getKeywordWithDetails($fk_adgroup_preview_id)
     {
-        $table = $this->adwords_keyword->getTable();
+        $table = $this->model->getTable();
         return DB::table($table)
             ->join('adwords_keywords', $table.'.fk_adwords_keyword_id', '=', 'adwords_keywords.id')
             ->select(DB::RAW($table.'.formatted_keyword AS keyword, '.$table.'.id AS keyword_preview_id, '.$table.'.keyword_type AS keyword_type,adwords_keywords.keyword_option AS keyword_option'))
@@ -140,7 +131,7 @@ class AdsKeywordPreviewRepository implements iAdsKeywordPreview
      */
     public function getKeywordsToDeleteFromAdwords($fk_adwords_feed_id)
     {
-        $table = $this->adwords_keyword->getTable();
+        $table = $this->model->getTable();
         return DB::table($table)
             ->join('adgroup_preview', $table.'.fk_adgroup_preview_id', '=', 'adgroup_preview.id')
             ->select(DB::RAW($table.'.adwords_id AS keyword_adwords_id, adgroup_preview.adwords_id AS adgroup_adwords_id, ads_keyword_preview.id AS keyword_id, ads_keyword_preview.fk_adwords_keyword_id AS fk_adwords_keyword_id '))

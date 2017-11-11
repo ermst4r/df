@@ -6,23 +6,14 @@ use App\Entity\BoladsPreview;
 use App\Entity\CategoryFilter;
 use App\Entity\Repository\Contract\iBolAdsPreview;
 use DB;
-class BolAdsPreviewRepository implements iBolAdsPreview
+class BolAdsPreviewRepository extends Repository implements iBolAdsPreview
 {
 
-    private $bol_ads_preview;
 
-    /**
-     * CategoryFilterRepository constructor.
-     * @param CategoryFilter $categoryFilter
-     */
-    public function __construct(BoladsPreview $boladsPreview)
-    {
-        $this->bol_ads_preview = $boladsPreview;
-    }
 
     public function updatePreview($data,$id)
     {
-        $this->bol_ads_preview->where('id',$id)->update($data);
+        $this->model->where('id',$id)->update($data);
     }
 
     /**
@@ -31,7 +22,7 @@ class BolAdsPreviewRepository implements iBolAdsPreview
      */
     public function pluckPreviewAds($fk_bol_id)
     {
-        return $this->bol_ads_preview->where('fk_bol_id',$fk_bol_id)->pluck('ean')->toArray();
+        return $this->model->where('fk_bol_id',$fk_bol_id)->pluck('ean')->toArray();
     }
 
     /**
@@ -42,9 +33,9 @@ class BolAdsPreviewRepository implements iBolAdsPreview
     public function createAdPreview($data, $id = 0)
     {
         if($id == 0 ) {
-            return $this->bol_ads_preview->create($data);
+            return $this->model->create($data);
         } else {
-            return  $this->bol_ads_preview->where('id',$id)->update($data);
+            return  $this->model->where('id',$id)->update($data);
         }
     }
 
@@ -56,7 +47,7 @@ class BolAdsPreviewRepository implements iBolAdsPreview
     public function getPreviewAds($fk_bol_id)
     {
 
-        return $this->bol_ads_preview->where('fk_bol_id',$fk_bol_id)->get();
+        return $this->model->where('fk_bol_id',$fk_bol_id)->get();
     }
 
 
@@ -70,8 +61,8 @@ class BolAdsPreviewRepository implements iBolAdsPreview
     {
 
         $exists = true;
-        if($this->bol_ads_preview->where('ean',$ean) ->where('fk_bol_id',$fk_bol_id)->count()  == 1) {
-              $this->bol_ads_preview->where('ean',$ean)
+        if($this->model->where('ean',$ean) ->where('fk_bol_id',$fk_bol_id)->count()  == 1) {
+              $this->model->where('ean',$ean)
                 ->where('fk_bol_id',$fk_bol_id)
                 -> update($data);
         } else {

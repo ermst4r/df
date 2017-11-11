@@ -10,22 +10,13 @@ use App\Entity\Repository\Contract\iChannel;
  * Class XmlMappingRepository
  * @package App\Entity\Repository
  */
-class ChannelRepository implements iChannel
+class ChannelRepository extends Repository implements iChannel
 {
-    private $channel;
-
-    /**
-     * ChannelRepository constructor.
-     * @param Channel $channel
-     */
-    public function __construct(Channel $channel)
-    {
-        $this->channel = $channel;
-    }
+    
 
     public function getChannel($channel_id)
     {
-        return $this->channel->find($channel_id);
+        return $this->model->find($channel_id);
     }
 
     /**
@@ -35,11 +26,11 @@ class ChannelRepository implements iChannel
     public function createChannel($data)
     {
 
-        $has_entry = $this->channel->where('id',$data['id'])->count();
+        $has_entry = $this->model->where('id',$data['id'])->count();
         if($has_entry == 0) {
-            $this->channel->create($data);
+            $this->model->create($data);
         } else {
-            $this->channel->where('id',$data['id'])->update($data);
+            $this->model->where('id',$data['id'])->update($data);
         }
         return $data['id'];
     }
@@ -51,7 +42,7 @@ class ChannelRepository implements iChannel
 
     public function getChannelByCountry($fk_country_id)
     {
-        return $this->channel->where('fk_country_id',$fk_country_id)->get();
+        return $this->model->where('fk_country_id',$fk_country_id)->get();
     }
 
 

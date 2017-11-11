@@ -10,13 +10,9 @@ use App\Entity\Repository\Contract\iChannelMapping;
  * Class XmlMappingRepository
  * @package App\Entity\Repository
  */
-class ChannelMappingRepository implements iChannelMapping
+class ChannelMappingRepository extends Repository implements iChannelMapping
 {
-    private $channel_mapping;
-    public function __construct(ChannelMapping $channel_mapping)
-    {
-        $this->channel_mapping = $channel_mapping;
-    }
+
 
     /**
      * Update or create...
@@ -25,11 +21,11 @@ class ChannelMappingRepository implements iChannelMapping
      */
    public function createChannelMapping($data)
    {
-       $has_entry = $this->channel_mapping->where('id',$data['id'])->count();
+       $has_entry = $this->model->where('id',$data['id'])->count();
        if($has_entry == 0) {
-            $this->channel_mapping->create($data);
+            $this->model->create($data);
        } else {
-           $this->channel_mapping->where('id',$data['id'])->update($data);
+           $this->model->where('id',$data['id'])->update($data);
        }
        return $data['id'];
 
@@ -42,7 +38,7 @@ class ChannelMappingRepository implements iChannelMapping
    public function getChannelMappings($fk_channel_id,$fk_channel_type_id,$pluck_value=false)
    {
        if($pluck_value) {
-           return $this->channel_mapping
+           return $this->model
 
                ->where('fk_channel_id',$fk_channel_id)
                ->where('fk_channel_type_id',$fk_channel_type_id)
@@ -50,7 +46,7 @@ class ChannelMappingRepository implements iChannelMapping
                ->pluck('channel_field_name')
                ->toArray();
        } else {
-           return $this->channel_mapping
+           return $this->model
                ->where('fk_channel_id',$fk_channel_id)
                ->where('fk_channel_type_id',$fk_channel_type_id)
                ->orderBy('channel_field_type','asc')->get();

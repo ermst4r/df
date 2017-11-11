@@ -11,6 +11,7 @@ use App\DfCore\DfBs\Import\Mapping\MappingFactory;
 use App\DfCore\DfBs\Import\Mapping\MappingValidator;
 use App\DfCore\DfBs\Import\Mapping\ProductId;
 use App\DfCore\DfBs\Import\Remote\RemoteFileService;
+use App\DfCore\DfBs\Import\Xml\CustomXmlParser\Parsefeed;
 use App\DfCore\DfBs\Import\Xml\XmlReaderFacade;
 use App\DfCore\DfBs\Log\FeedlogFacade;
 use App\Entity\Repository\FeedRepository;
@@ -78,9 +79,9 @@ class ImportFeedFacade
     {
 
         if(is_null($feed_args['prepend_nodes'])) {
-            $xml_args = $this->prepareXmlImportFacade($feed_args,$custom_mapping,$custom_mapping);
+            $xml_args = $this->prepareXmlImportFacade($feed_args,$custom_mapping);
         } else {
-            $xml_args =  $this->preparecustomXmlImport($feed_args,$custom_mapping,$custom_mapping);
+            $xml_args =  $this->preparecustomXmlImport($feed_args,$custom_mapping);
         }
 
 
@@ -96,6 +97,7 @@ class ImportFeedFacade
         /**
          * Insert data into ES
          */
+
         $this->insertBulkData($DynamicFeedRepository,$feed_args,$xml_args['inserts'],$refresh);
 
     }
@@ -114,6 +116,7 @@ class ImportFeedFacade
                 $this->importCsvFeed($feed_args,$DynamicFeedRepository,$refresh,$custom_mapping);
             break;
             case ImportType::XML:
+
                 $this->importXmlFeed($feed_args,$DynamicFeedRepository,$refresh,$custom_mapping);
             break;
         }
@@ -164,8 +167,17 @@ class ImportFeedFacade
          */
         $status =  RemoteFileService::checkRemoteFileExist($get_feed->feed_url);
         $file_name = RemoteFileService::generateSavePath($feed_type,$feed_id);
-        $file_saved = file_exists($file_name);
         RemoteFileService::downloadFileWithCurl($get_feed->feed_url,$file_name);
+        $file_saved = file_exists($file_name);
+
+
+        if(strlen($get_feed->feed_custom_parser) >0  || !is_null($get_feed->feed_custom_parser)) {
+            $parse_feed = new Parsefeed($file_name,$get_feed->feed_custom_parser);
+            $parse_feed->writeNewFeedData();
+            $xml->removeMapping($feed_id);
+            $xml->createXmlMapping([['xml_map_name'=>$parse_feed->getIdField(),'mapped_xml_name'=>'product_id','fk_feed_id'=>$feed_id]]);
+        }
+
         $detect_feed_type = FeedWriter::detectFeedType($file_name);
 
         /**
@@ -179,7 +191,9 @@ class ImportFeedFacade
 
 
         $mapping_info = MappingFactory::setMapping($file_name,$get_feed);
+
         $mapped_fields_from_user = MappedVisibleFieldsFacade::getFeedFieldsFromMapping($get_feed,$mapping_info['workable_data']);
+
         if(!$status) {
             FeedlogFacade::addAlert($feed_id,trans('messages.general_notifications_lbl2'),LogStates::CRITICAL);
 
@@ -340,9 +354,11 @@ class ImportFeedFacade
         $extra_meta_data_for_es  = array_merge(config('dfbuilder.es_meta_fields'),$extra_meta_data_for_es);
 
         foreach ($this->bulk_types as $bulk) {
+
             $dynamicFeedRepository->insertBulkData($inserts,$extra_meta_data_for_es,$bulk,false,$refresh);
 
         }
+
     }
 
 

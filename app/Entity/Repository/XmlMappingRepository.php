@@ -10,13 +10,9 @@ use App\Entity\Xmlmapping;
  * Class XmlMappingRepository
  * @package App\Entity\Repository
  */
-class XmlMappingRepository implements iXmlMapping
+class XmlMappingRepository extends Repository implements iXmlMapping
 {
-    private $xmlMapping;
-    public function __construct(Xmlmapping $xmlMapping)
-    {
-        $this->xmlMapping = $xmlMapping;
-    }
+
 
     /**
      * @param $id
@@ -24,7 +20,7 @@ class XmlMappingRepository implements iXmlMapping
      */
     public function getXmlMapping($id)
     {
-        return $this->xmlMapping->findOrFail($id);
+        return $this->model->findOrFail($id);
     }
 
     /**
@@ -36,7 +32,7 @@ class XmlMappingRepository implements iXmlMapping
     {
 
         foreach($data as $rows) {
-            $this->xmlMapping->create($rows);
+            $this->model->create($rows);
         }
 
         return count($data);
@@ -49,7 +45,7 @@ class XmlMappingRepository implements iXmlMapping
      */
     public function isMapped($feed_id)
     {
-        return $this->xmlMapping->where('fk_feed_id',$feed_id)->count() >= 1;
+        return $this->model->where('fk_feed_id',$feed_id)->count() >= 1;
     }
 
 
@@ -60,7 +56,7 @@ class XmlMappingRepository implements iXmlMapping
      */
     public function getPlainMappedFields($feed_id)
     {
-        $array =  $this->xmlMapping->where('fk_feed_id','=',$feed_id)->pluck('xml_map_name','mapped_xml_name');
+        $array =  $this->model->where('fk_feed_id','=',$feed_id)->pluck('xml_map_name','mapped_xml_name');
         $return_array = [];
 
         foreach($array as $key=>$values) {
@@ -76,6 +72,6 @@ class XmlMappingRepository implements iXmlMapping
      */
     public  function removeMapping($id)
     {
-        return $this->xmlMapping->where('fk_feed_id','=',$id)->delete();
+        return $this->model->where('fk_feed_id','=',$id)->delete();
     }
 }

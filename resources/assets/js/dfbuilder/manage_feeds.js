@@ -34,9 +34,7 @@
         });
     };
 
-    var pusher = new Pusher(config.pusher_key, {
-        encrypted: true
-    });
+    var pusher = new Pusher(config.pusher_key);
     var channel = pusher.subscribe('feed_imported');
     channel.bind('App\\Events\\FeedImported', function(data) {
 

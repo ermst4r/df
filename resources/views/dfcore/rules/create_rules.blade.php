@@ -26,7 +26,7 @@
 
             @if($url_key == \App\DfCore\DfBs\Enum\UrlKey::ADWORDS)
                 {!! Form::hidden('adwords_feed_id',$adwords_feed_id) !!}
-                {!! Form::hidden('url_key',\App\DfCore\DfBs\Enum\UrlKey::CHANNEL_FEED) !!}
+                {!! Form::hidden('url_key',\App\DfCore\DfBs\Enum\UrlKey::ADWORDS) !!}
             @endif
 
 

@@ -6,30 +6,21 @@ use App\DfCore\DfBs\Enum\RevisionType;
 use App\Entity\Repository\Contract\iRevision;
 use App\Entity\Revision;
 
-class RevisionRepository  implements iRevision  {
+class RevisionRepository  extends Repository implements iRevision  {
 
 
-    private $revision;
 
-    /**
-     * RevisionRepository constructor.
-     * @param Revision $revision
-     */
-    public function __construct(Revision $revision)
-    {
-        $this->revision = $revision;
-    }
 
 
     /**
-     * Get the updated revision data
+     * Get the updated model data
      * And pluck it to an array...
      * @param $feed_id
      * @return mixed
      */
     public function getUpdatedRevisionData($fk_channel_feed_id)
     {
-        return $this->revision->where('fk_channel_feed_id',$fk_channel_feed_id)
+        return $this->model->where('fk_channel_feed_id',$fk_channel_feed_id)
                 ->where('revision_type',RevisionType::UPDATE)
                 ->get();
 
@@ -43,7 +34,7 @@ class RevisionRepository  implements iRevision  {
      */
     public function getDeletedRevisionData($fk_channel_feed_id)
     {
-        return $this->revision->where('fk_channel_feed_id',$fk_channel_feed_id)
+        return $this->model->where('fk_channel_feed_id',$fk_channel_feed_id)
                 ->where('revision_type',RevisionType::DELETE)
                 ->pluck('generated_id')->toArray();
     }
@@ -58,7 +49,7 @@ class RevisionRepository  implements iRevision  {
         /**
          * Update where the id, fieldname and feed_id matches
          */
-        if($this->revision
+        if($this->model
                 ->where('generated_id',$data['generated_id'])
                 ->where('revision_field_name',$data['revision_field_name'])
                 ->where('fk_feed_id',$data['fk_feed_id'])
@@ -68,7 +59,7 @@ class RevisionRepository  implements iRevision  {
                 ->count() > 0) {
 
 
-                $this->revision
+                $this->model
                     ->where('generated_id',$data['generated_id'])
                     ->where('revision_field_name',$data['revision_field_name'])
                     ->where('fk_feed_id',$data['fk_feed_id'])
@@ -79,7 +70,7 @@ class RevisionRepository  implements iRevision  {
 
         } else {
 
-            $this->revision->create($data);
+            $this->model->create($data);
         }
         return $data['generated_id'];
 
@@ -97,7 +88,7 @@ class RevisionRepository  implements iRevision  {
                 'fk_channel_feed_id'=>$channel_feed_id,
                 'fk_channel_type_id'=>$channel_type_id,
             ];
-            $this->revision->create($data);
+            $this->model->create($data);
         }
 
     }
@@ -109,7 +100,7 @@ class RevisionRepository  implements iRevision  {
      */
     public function removeRevision($id)
     {
-        return $this->revision->where('product_id',$id)->delete();
+        return $this->model->where('product_id',$id)->delete();
     }
 
 

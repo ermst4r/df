@@ -8,14 +8,10 @@ use App\Entity\Store;
 use App\Entity\Tasklog;
 use DB;
 
-class TasklogRepository  implements iTaskLog  {
+class TasklogRepository extends Repository  implements iTaskLog  {
 
 
-    private $task;
-    public function __construct(Tasklog $task)
-    {
-        $this->task = $task;
-    }
+
 
 
     /**
@@ -26,9 +22,9 @@ class TasklogRepository  implements iTaskLog  {
     public function createTask($data = array(),$id=0)
     {
         if($id == 0 ) {
-            return $this->task->create($data);
+            return $this->model->create($data);
         } else {
-            return $this->task->where('id',$id)->update($data);
+            return $this->model->where('id',$id)->update($data);
         }
 
     }
@@ -39,7 +35,7 @@ class TasklogRepository  implements iTaskLog  {
      */
     public function getTasks($limit,$status=true)
     {
-        return $this->task->where('status',$status)->orderBy('created_at','desc')
+        return $this->model->where('status',$status)->orderBy('created_at','desc')
             ->limit($limit)
             ->get();
 
@@ -53,7 +49,7 @@ class TasklogRepository  implements iTaskLog  {
      */
     public function getTaskByFeed($feed_id,$status=false)
     {
-        return $this->task->where('fk_feed_id',$feed_id)
+        return $this->model->where('fk_feed_id',$feed_id)
             ->where('status',$status)
             ->orderBy('created_at','desc')
             ->get();
@@ -76,20 +72,20 @@ class TasklogRepository  implements iTaskLog  {
             $end_date = $end_date. ' 23:59:59';
         }
 
-        $table = $this->task->getTable();
+
         if($limit == 0 ) {
-            return DB::table($table)
-                ->join('feeds', $table.'.fk_feed_id', '=', 'feeds.id')
-                ->select(DB::RAW('feeds.feed_name AS feed_name,'.$table.'.task AS task, '.$table.'.status AS status, '.$table.'.created_at AS created_at'))
-                ->whereBetween($table.'.created_at',array($start_date,$end_date))
-                ->orderBy($table.'.created_at','desc')
+            return $this->model
+                ->join('feeds', $this->model->getTable().'.fk_feed_id', '=', 'feeds.id')
+                ->select(DB::RAW('feeds.feed_name AS feed_name,'.$this->model->getTable().'.task AS task, '.$this->model->getTable().'.status AS status, '.$this->model->getTable().'.created_at AS created_at'))
+                ->whereBetween($this->model->getTable().'.created_at',array($start_date,$end_date))
+                ->orderBy($this->model->getTable().'.created_at','desc')
                 ->get();
         } else {
-            return DB::table($table)
-                ->join('feeds', $table.'.fk_feed_id', '=', 'feeds.id')
-                ->select(DB::RAW('feeds.feed_name AS feed_name,'.$table.'.task AS task, '.$table.'.status AS status, '.$table.'.created_at AS created_at'))
-                ->whereBetween($table.'.created_at',array($start_date,$end_date))
-                ->orderBy($table.'.created_at','desc')
+            return $this->model
+                ->join('feeds', $this->model->getTable().'.fk_feed_id', '=', 'feeds.id')
+                ->select(DB::RAW('feeds.feed_name AS feed_name,'.$this->model->getTable().'.task AS task, '.$this->model->getTable().'.status AS status, '.$this->model->getTable().'.created_at AS created_at'))
+                ->whereBetween($this->model->getTable().'.created_at',array($start_date,$end_date))
+                ->orderBy($this->model->getTable().'.created_at','desc')
                 ->limit($limit)
                 ->get();
         }

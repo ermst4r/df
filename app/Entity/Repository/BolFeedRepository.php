@@ -7,19 +7,10 @@ use App\Entity\Bolfeed;
 use App\Entity\CategoryFilter;
 use App\Entity\Repository\Contract\iBolFeed;
 use DB;
-class BolFeedRepository implements iBolFeed
+class BolFeedRepository extends Repository implements iBolFeed
 {
 
-    private $bol_feed;
-
-    /**
-     * CategoryFilterRepository constructor.
-     * @param CategoryFilter $categoryFilter
-     */
-    public function __construct(Bolfeed $bol_feed)
-    {
-        $this->bol_feed = $bol_feed;
-    }
+   
 
 
     /**
@@ -29,7 +20,7 @@ class BolFeedRepository implements iBolFeed
 
     public function getCompleteBolFeed($store_id)
     {
-        $table = $this->bol_feed->getTable();
+        $table = $this->model->getTable();
         return DB::table($table)
             ->join('feeds', $table.'.fk_feed_id', '=', 'feeds.id')
             ->select(
@@ -50,9 +41,9 @@ class BolFeedRepository implements iBolFeed
     public function createBolFeed($data, $id = 0)
     {
        if($id == 0 ) {
-          return $this->bol_feed->create($data);
+          return $this->model->create($data);
        } else {
-          return  $this->bol_feed->where('id',$id)->update($data);
+          return  $this->model->where('id',$id)->update($data);
        }
     }
 
@@ -63,10 +54,10 @@ class BolFeedRepository implements iBolFeed
     public function getBolFeed($id,$by_feed=false)
     {
         if(!$by_feed ) {
-            return $this->bol_feed->findOrFail($id);
+            return $this->model->findOrFail($id);
 
         } else {
-            return $this->bol_feed->where('fk_feed_id',$id)->get();
+            return $this->model->where('fk_feed_id',$id)->get();
         }
 
     }
@@ -78,7 +69,7 @@ class BolFeedRepository implements iBolFeed
      */
     public function removeBolFeed($id)
     {
-        return $this->bol_feed->where('id',$id)->delete();
+        return $this->model->where('id',$id)->delete();
     }
 
 }

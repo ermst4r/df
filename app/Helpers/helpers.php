@@ -42,6 +42,9 @@ function createEsIndexName($id,$type=\App\DfCore\DfBs\Enum\ESIndexTypes::TMP)
 
 
 
+function IsNullOrEmptyString($question){
+    return (!isset($question) || trim($question)==='');
+}
 
 function debug_string($custom_msg,\Exception $e)
 {

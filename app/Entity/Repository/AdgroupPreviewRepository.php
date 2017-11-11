@@ -8,19 +8,10 @@ use App\Entity\AdwordsAd;
 use App\Entity\Repository\Contract\iAdgroupPreview;
 
 
-class AdgroupPreviewRepository implements iAdgroupPreview
+class AdgroupPreviewRepository extends Repository implements iAdgroupPreview
 {
 
-    private $adgroup_preview;
 
-    /**
-     * AdwordsAdRepository constructor.
-     * @param AdwordsAd $adwords_ad
-     */
-    public function __construct(AdgroupPreview $adgroup_preview)
-    {
-        $this->adgroup_preview = $adgroup_preview;
-    }
 
 
     /**
@@ -29,12 +20,12 @@ class AdgroupPreviewRepository implements iAdgroupPreview
      */
     public function removeSingleAdgroup($id)
     {
-        return $this->adgroup_preview->where('id',$id)->delete();
+        return $this->model->where('id',$id)->delete();
     }
 
     public function getAdgroupPreviewByName($adgroup_name,$campaign_id)
     {
-        return $this->adgroup_preview->where('fk_campaigns_preview_id',$campaign_id)
+        return $this->model->where('fk_campaigns_preview_id',$campaign_id)
             ->where('adgroup_name',$adgroup_name)
             ->first();
     }
@@ -45,7 +36,7 @@ class AdgroupPreviewRepository implements iAdgroupPreview
      */
     public function getAdgroupFromCampaign($campaign_id)
     {
-        return $this->adgroup_preview->where('fk_campaigns_preview_id',$campaign_id)->get();
+        return $this->model->where('fk_campaigns_preview_id',$campaign_id)->get();
     }
 
 
@@ -55,9 +46,9 @@ class AdgroupPreviewRepository implements iAdgroupPreview
     public function createAdgroupPreview($data,$id=0)
     {
         if($id == 0 ) {
-            return $this->adgroup_preview->create($data);
+            return $this->model->create($data);
         } else {
-            return $this->adgroup_preview->where('id',$id)->update($data);
+            return $this->model->where('id',$id)->update($data);
         }
 
     }
@@ -70,7 +61,7 @@ class AdgroupPreviewRepository implements iAdgroupPreview
     public function getAdgroupData($fk_adwords_feed_id)
     {
         $returnArray = [];
-         foreach($this->adgroup_preview->where('fk_adwords_feed_id',$fk_adwords_feed_id)->get() as $values) {
+         foreach($this->model->where('fk_adwords_feed_id',$fk_adwords_feed_id)->get() as $values) {
              $returnArray[$values->fk_campaigns_preview_id][$values->adgroup_name] = $values->id;
          }
          return $returnArray;
@@ -86,9 +77,9 @@ class AdgroupPreviewRepository implements iAdgroupPreview
     public function getAdgroupDataFromCampaigns($fk_campaigns_preview_id,$to_array = true)
     {
         if(!$to_array) {
-            return $this->adgroup_preview->where('fk_campaigns_preview_id',$fk_campaigns_preview_id)->get();
+            return $this->model->where('fk_campaigns_preview_id',$fk_campaigns_preview_id)->get();
         } else {
-            return $this->adgroup_preview->where('fk_campaigns_preview_id',$fk_campaigns_preview_id)->pluck('adgroup_name','id')->toArray();
+            return $this->model->where('fk_campaigns_preview_id',$fk_campaigns_preview_id)->pluck('adgroup_name','id')->toArray();
         }
 
     }
@@ -100,7 +91,7 @@ class AdgroupPreviewRepository implements iAdgroupPreview
      */
     public function getAdgroupsToDelete($fk_adwords_feed_id)
     {
-        return $this->adgroup_preview->where('fk_adwords_feed_id',$fk_adwords_feed_id)->where('delete_from_adwords',true)->get();
+        return $this->model->where('fk_adwords_feed_id',$fk_adwords_feed_id)->where('delete_from_adwords',true)->get();
     }
 
 

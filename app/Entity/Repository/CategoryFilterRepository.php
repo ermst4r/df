@@ -8,19 +8,10 @@ use App\Entity\Repository\Contract\iCategoryFilter;
 use DB;
 
 
-class CategoryFilterRepository implements iCategoryFilter
+class CategoryFilterRepository extends Repository implements iCategoryFilter
 {
 
-    private $categoryFilter;
-
-    /**
-     * CategoryFilterRepository constructor.
-     * @param CategoryFilter $categoryFilter
-     */
-    public function __construct(CategoryFilter $categoryFilter)
-    {
-        $this->categoryFilter = $categoryFilter;
-    }
+   
 
 
     /**
@@ -31,9 +22,9 @@ class CategoryFilterRepository implements iCategoryFilter
     public function createCategoryFilter($data = array(), $id=0)
     {
         if($id == 0) {
-            return  $this->categoryFilter->create($data);
+            return  $this->model->create($data);
         } else {
-            $this->categoryFilter->find($id)->update($data);
+            $this->model->find($id)->update($data);
             return $id;
         }
 
@@ -47,7 +38,7 @@ class CategoryFilterRepository implements iCategoryFilter
      */
     public function getCategoryFilter($id)
     {
-        return  $this->categoryFilter->findOrFail($id);
+        return  $this->model->findOrFail($id);
     }
 
     /**
@@ -56,7 +47,7 @@ class CategoryFilterRepository implements iCategoryFilter
      */
     public function getChannelCategories($id,$from_feed_id = false)
     {
-        $table = $this->categoryFilter->getTable();
+        $table = $this->model->getTable();
         $where = 'category_channel.fk_channel_feed_id';
         if($from_feed_id) {
             $where = $table.'.fk_feed_id';
@@ -80,7 +71,7 @@ class CategoryFilterRepository implements iCategoryFilter
      */
     public function getBolCategories($id,$from_feed_id = false)
     {
-        $table = $this->categoryFilter->getTable();
+        $table = $this->model->getTable();
         $where = 'category_bol.fk_bol_id';
         if($from_feed_id) {
             $where = $table.'.fk_feed_id';
@@ -105,16 +96,16 @@ class CategoryFilterRepository implements iCategoryFilter
     public function getCategoryFilterFromFeed($id,$channel_feed_level=false)
     {
         if(!$channel_feed_level) {
-            return $this->categoryFilter->where('fk_feed_id','=',$id)->where('visible','=',true)->get();
+            return $this->model->where('fk_feed_id','=',$id)->where('visible','=',true)->get();
         } else {
-            return $this->categoryFilter->where('fk_channel_feed_id','=',$id)->where('visible','=',true)->get();
+            return $this->model->where('fk_channel_feed_id','=',$id)->where('visible','=',true)->get();
         }
 
     }
 
     public function deleteFilter($filter_id)
     {
-        $this->categoryFilter->findOrFail($filter_id)->delete();
+        $this->model->findOrFail($filter_id)->delete();
 
     }
 
@@ -126,7 +117,7 @@ class CategoryFilterRepository implements iCategoryFilter
      */
     public function getCatIdsFromChannel($fk_channel_feed_id,$visible = null)
     {
-        $table = $this->categoryFilter->getTable();
+        $table = $this->model->getTable();
         if(is_null($visible)) {
             return DB::table($table)
                 ->join('category_channel', $table.'.id', '=', 'category_channel.fk_category_filter_id')
@@ -159,7 +150,7 @@ class CategoryFilterRepository implements iCategoryFilter
      */
     public function getCatIdsFromBol($bol_id)
     {
-        $table = $this->categoryFilter->getTable();
+        $table = $this->model->getTable();
         return DB::table($table)
             ->join('category_bol', $table.'.id', '=', 'category_bol.fk_category_filter_id')
             ->select(DB::RAW($table.'.id AS id,'.$table.'.fk_feed_id AS fk_feed_id, 

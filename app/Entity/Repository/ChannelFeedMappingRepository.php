@@ -11,22 +11,18 @@ use DB;
  * Class XmlMappingRepository
  * @package App\Entity\Repository
  */
-class ChannelFeedMappingRepository implements iChannelFeedMapping
+class ChannelFeedMappingRepository  extends Repository implements iChannelFeedMapping
 {
-    private $channel_feed_mapping;
-    public function __construct(ChannelFeedMapping $channel_feed_mapping)
-    {
-        $this->channel_feed_mapping = $channel_feed_mapping;
-    }
+   
 
     public function createChannelFeedMapping($data)
     {
-        $this->channel_feed_mapping->create($data);
+        $this->model->create($data);
     }
 
     public function removeChannelFieldMapping($fk_channel_feed_id)
     {
-        $this->channel_feed_mapping->where('fk_channel_feed_id',$fk_channel_feed_id)->delete();
+        $this->model->where('fk_channel_feed_id',$fk_channel_feed_id)->delete();
 
     }
 
@@ -38,7 +34,7 @@ class ChannelFeedMappingRepository implements iChannelFeedMapping
      */
     public function spreadSheetDuplicateColumnHelper($fk_channel_feed_id,$fk_channel_type_id)
     {
-        $table = $this->channel_feed_mapping->getTable();
+        $table = $this->model->getTable();
         $rows =  DB::table($table)
             ->join('channel_mapping', $table.'.fk_channel_mapping_id', '=', 'channel_mapping.id')
             ->where($table.'.fk_channel_feed_id',$fk_channel_feed_id)
@@ -66,7 +62,7 @@ class ChannelFeedMappingRepository implements iChannelFeedMapping
 
     public function getMappingTemplate($fk_channel_feed_id,$fk_channel_type_id,$to_array = true)
     {
-        $table = $this->channel_feed_mapping->getTable();
+        $table = $this->model->getTable();
         if($to_array) {
             return DB::table($table)
                 ->join('channel_mapping', $table.'.fk_channel_mapping_id', '=', 'channel_mapping.id')
@@ -90,7 +86,7 @@ class ChannelFeedMappingRepository implements iChannelFeedMapping
      */
     public function getMappedItems($fk_channel_feed_id,$fk_channel_type_id)
     {
-        $table = $this->channel_feed_mapping->getTable();
+        $table = $this->model->getTable();
         return DB::table($table)
             ->join('channel_mapping', $table.'.fk_channel_mapping_id', '=', 'channel_mapping.id')
             ->where($table.'.fk_channel_feed_id',$fk_channel_feed_id)
@@ -110,7 +106,7 @@ class ChannelFeedMappingRepository implements iChannelFeedMapping
      */
     public function hasDuplicateFieldName($fk_channel_feed_id,$fk_channel_type_id,$feed_row_name)
     {
-        return $this->channel_feed_mapping
+        return $this->model
             ->where('fk_channel_feed_id',$fk_channel_feed_id)
             ->where('fk_channel_type_id',$fk_channel_type_id)
             ->where('feed_row_name',$feed_row_name)->count() >= 1;

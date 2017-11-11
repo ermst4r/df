@@ -9,27 +9,18 @@ use App\Entity\Repository\Contract\iAdCampaignPreview;
 use DB;
 
 
-class AdCampaignPreviewRepository implements iAdCampaignPreview
+class AdCampaignPreviewRepository  extends Repository implements iAdCampaignPreview
 {
 
-    private $adcampaign_preview;
 
-    /**
-     * AdwordsAdRepository constructor.
-     * @param AdwordsAd $adwords_ad
-     */
-    public function __construct(AdCampaignPreview $adcampaign_preview)
-    {
-        $this->adcampaign_preview = $adcampaign_preview;
-    }
 
 
     public function removeExistingCampaignFromPreview($fk_adwords_feed_id,$existing_campaign)
     {
         if($existing_campaign == 0 ) {
-            return $this->adcampaign_preview->where('fk_adwords_feed_id',$fk_adwords_feed_id)->delete();
+            return $this->model->where('fk_adwords_feed_id',$fk_adwords_feed_id)->delete();
         } else {
-            return $this->adcampaign_preview->where('fk_adwords_feed_id',$fk_adwords_feed_id)->where('existing_campaign',$existing_campaign)->delete();
+            return $this->model->where('fk_adwords_feed_id',$fk_adwords_feed_id)->where('existing_campaign',$existing_campaign)->delete();
         }
 
 
@@ -41,17 +32,17 @@ class AdCampaignPreviewRepository implements iAdCampaignPreview
      */
     public function removeSingleCampaign($id)
     {
-        return $this->adcampaign_preview->where('id',$id)->delete();
+        return $this->model->where('id',$id)->delete();
     }
 
     /**
      * @param $fk_adwords_feed_id
      * @param $campaign_name
-     * @return bool
+     * @return mixed
      */
     public function campaignExists($fk_adwords_feed_id,$campaign_name)
     {
-        return $this->adcampaign_preview->where('fk_adwords_feed_id',$fk_adwords_feed_id)
+        return $this->model->where('fk_adwords_feed_id',$fk_adwords_feed_id)
                                         ->where('campaign_name',$campaign_name)
                                         ->first() ;
     }
@@ -66,9 +57,9 @@ class AdCampaignPreviewRepository implements iAdCampaignPreview
     public function getPreviewCampaigns($fk_adwords_feed_id, $to_array = true)
     {
         if($to_array) {
-            return $this->adcampaign_preview->where('fk_adwords_feed_id',$fk_adwords_feed_id)->pluck('id','campaign_name')->toArray();
+            return $this->model->where('fk_adwords_feed_id',$fk_adwords_feed_id)->pluck('id','campaign_name')->toArray();
         } else {
-            return $this->adcampaign_preview->where('fk_adwords_feed_id',$fk_adwords_feed_id)->get();
+            return $this->model->where('fk_adwords_feed_id',$fk_adwords_feed_id)->get();
         }
 
     }
@@ -80,9 +71,9 @@ class AdCampaignPreviewRepository implements iAdCampaignPreview
     public function createCampaignPreview($data,$id=0)
     {
         if($id > 0) {
-           return $this->adcampaign_preview->where('id',$id)->update($data);
+           return $this->model->where('id',$id)->update($data);
         } else {
-            return $this->adcampaign_preview->create($data);
+            return $this->model->create($data);
         }
 
     }
@@ -94,7 +85,7 @@ class AdCampaignPreviewRepository implements iAdCampaignPreview
      */
     public function removeAdCampaignPreview($id)
     {
-        return $this->adcampaign_preview->where('fk_adwords_feed_id',$id)->delete();
+        return $this->model->where('fk_adwords_feed_id',$id)->delete();
     }
 
 
@@ -104,7 +95,7 @@ class AdCampaignPreviewRepository implements iAdCampaignPreview
      */
     public function getAdgroups($fk_adwords_feed_id)
     {
-        $table = $this->adcampaign_preview->getTable();
+        $table = $this->model->getTable();
         return DB::table($table)
             ->join('adgroup_preview', $table.'.id', '=', 'adgroup_preview.fk_campaigns_preview_id')
             ->where($table.'.fk_adwords_feed_id','=',$fk_adwords_feed_id)
@@ -129,7 +120,7 @@ class AdCampaignPreviewRepository implements iAdCampaignPreview
     public function getCampaignsToDelete($fk_adwords_feed_id)
     {
 
-       return $this->adcampaign_preview->where('fk_adwords_feed_id',$fk_adwords_feed_id)->where('delete_from_adwords',true)->get();
+       return $this->model->where('fk_adwords_feed_id',$fk_adwords_feed_id)->where('delete_from_adwords',true)->get();
     }
 
 

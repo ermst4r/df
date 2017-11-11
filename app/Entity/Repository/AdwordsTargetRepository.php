@@ -7,19 +7,10 @@ use App\Entity\AdwordsTarget;
 use App\Entity\Repository\Contract\iAdwordsTarget;
 
 
-class AdwordsTargetRepository implements iAdwordsTarget
+class AdwordsTargetRepository extends Repository implements iAdwordsTarget
 {
 
-    private $adwords_target;
 
-    /**
-     * AdwordsTargetRepository constructor.
-     * @param AdwordsTarget $adwords_target
-     */
-    public function __construct(AdwordsTarget $adwords_target)
-    {
-        $this->adwords_target = $adwords_target;
-    }
 
 
     /**
@@ -28,7 +19,7 @@ class AdwordsTargetRepository implements iAdwordsTarget
      */
     public function getAdwordsTarget($fk_adwords_feed_id)
     {
-        return $this->adwords_target->where('fk_adwords_feed_id',$fk_adwords_feed_id)->first();
+        return $this->model->where('fk_adwords_feed_id',$fk_adwords_feed_id)->first();
     }
 
 
@@ -40,9 +31,9 @@ class AdwordsTargetRepository implements iAdwordsTarget
     public function createAdwordsTarget($data, $id=0)
     {
         if($id > 0) {
-            $this->adwords_target->where('id',$id)->update($data);
+            $this->model->where('id',$id)->update($data);
         } else {
-            $this->adwords_target->create($data);
+            $this->model->create($data);
         }
 
 

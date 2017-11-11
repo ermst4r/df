@@ -9,19 +9,10 @@ use App\Entity\Repository\Contract\iAdwordsGoogleLanguages;
 use DB;
 
 
-class AdwordsGoogleLanguagesRepository implements iAdwordsGoogleLanguages
+class AdwordsGoogleLanguagesRepository extends Repository implements iAdwordsGoogleLanguages
 {
 
-    private $adwords_google_languages;
-
-    /**
-     * AdwordsGoogleCountriesRepository constructor.
-     * @param AdwordsGoogleCountries $adwords_google_countries
-     */
-    public function __construct(AdwordsGoogleLanguages $adwords_google_languages)
-    {
-        $this->adwords_google_languages = $adwords_google_languages;
-    }
+   
 
 
     /**
@@ -32,9 +23,9 @@ class AdwordsGoogleLanguagesRepository implements iAdwordsGoogleLanguages
     public function createLanguages($data, $id = 0)
     {
         if($id == 0 ) {
-            return $this->adwords_google_languages->create($data);
+            return $this->model->create($data);
         } else {
-            return $this->adwords_google_languages->where('id',$id)->update($data);
+            return $this->model->where('id',$id)->update($data);
         }
     }
 
@@ -44,13 +35,13 @@ class AdwordsGoogleLanguagesRepository implements iAdwordsGoogleLanguages
      */
     public function getLanguages()
     {
-        return $this->adwords_google_languages->all();
+        return $this->model->all();
     }
 
 
     public function removeAllLanguages()
     {
-        return $this->adwords_google_languages->truncate();
+        return $this->model->truncate();
     }
 
 }

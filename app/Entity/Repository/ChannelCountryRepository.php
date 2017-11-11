@@ -10,13 +10,9 @@ use App\Entity\Repository\Contract\iChannelCountry;
  * Class XmlMappingRepository
  * @package App\Entity\Repository
  */
-class ChannelCountryRepository implements iChannelCountry
+class ChannelCountryRepository extends Repository implements iChannelCountry
 {
-    private $country;
-    public function __construct(ChannelCountry $country)
-    {
-        $this->country = $country;
-    }
+
 
     /**
      * @param $data
@@ -25,11 +21,11 @@ class ChannelCountryRepository implements iChannelCountry
     public function createCountry($data)
     {
 
-        $has_entry = $this->country->where('id',$data['id'])->count();
+        $has_entry = $this->model->where('id',$data['id'])->count();
         if($has_entry == 0) {
-            $this->country->create($data);
+            $this->model->create($data);
         } else {
-            $this->country->where('id',$data['id'])->update($data);
+            $this->model->where('id',$data['id'])->update($data);
         }
         return $data['id'];
 
@@ -38,7 +34,7 @@ class ChannelCountryRepository implements iChannelCountry
 
     public function getCountries()
     {
-        return $this->country->all();
+        return $this->model->all();
     }
 
 

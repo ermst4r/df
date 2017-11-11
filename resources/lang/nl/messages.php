@@ -124,6 +124,8 @@ return [
                                     rss.item',
     'import_selectfeed_lbl16' => '  Geef hier de start positie op. Vul hier niets in als je niet weet wat je in moet vullen.',
     'import_selectfeed_lbl17' => 'Geavanceerde XML settings (bij xml parse problemen)',
+    'import_selectfeed_lbl18' => 'Geef hier de custom xml parser op. De XML root node en overige setting worden dan niet meegenomen.',
+    'import_selectfeed_lbl19' => 'Xml Custom Parser',
     'import_progress_lbl1' => 'Stap 1',
     'import_progress_lbl2' => 'Stap 2', // a change
     'import_progress_lbl3' => 'Stap 3',
@@ -377,7 +379,7 @@ return [
     'manafeeds_lbl3'=>'Feed',
     'manafeeds_lbl4'=>'Type',
     'manafeeds_lbl5'=>'Adwords',
-    'manafeeds_lbl6'=>'Kanalen',
+    'manafeeds_lbl6'=>'Type',
     'manafeeds_lbl7'=>'Status',
     'manafeeds_lbl8'=>'Laatste update',
     'manafeeds_lbl9'=>'Actie',
@@ -731,6 +733,11 @@ Maximum amount of characters: 20',
     'error_lbl_2'=>'Geen errors gevonden!',
     'error_lbl_3'=>'Geen records gevonden!',
     'error_lbl_4'=>'Probeer wijzigingen door te voeren in de regels en importeer de feed opnieuw.',
+
+    /**
+     * Extra modules
+     */
+    'extra_module_menu_lbl1'=>'Category management',
 
 
 

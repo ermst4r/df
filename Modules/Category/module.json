@@ -1,0 +1,16 @@
+{
+    "name": "Category",
+    "alias": "category",
+    "description": "",
+    "keywords": [],
+    "active": 1,
+    "order": 0,
+    "providers": [
+        "Modules\\Category\\Providers\\CategoryServiceProvider"
+    ],
+    "aliases": {},
+    "files": [
+        "start.php"
+    ],
+    "requires": []
+}

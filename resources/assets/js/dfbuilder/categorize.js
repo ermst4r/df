@@ -86,7 +86,7 @@
                 if(data == 0 ) {
                     $("#phrase_"+item_number).css('background-color','orange').attr('data-toggle','tooltip').attr('toggle','').attr('title','Let op. Er zijn geen items gevonden in de feed voor de keyword ' + field_value ).removeClass('loading_txt_field');
                 } else {
-                    $("#phrase_"+item_number).css('background-color','#d5ffc7').attr('data-toggle','tooltip').attr('toggle','').attr('title','Er zijn  ' + data + " records gevonden met de criterium  " + field_value ).removeClass('loading_txt_field');
+                    $("#phrase_"+item_number).css('background-color','#d5ffc7').attr('data-toggle','tooltip').attr('toggle','').attr('title','Er zijn  ' + data + " records gevonden met het criterium  " + field_value ).removeClass('loading_txt_field');
                 }
 
                 $('.tooltip_field_'+item_number).tooltip("show");

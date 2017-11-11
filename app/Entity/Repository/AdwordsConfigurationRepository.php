@@ -7,19 +7,10 @@ use App\Entity\AdwordsConfiguration;
 use App\Entity\Repository\Contract\iAdwordsConfiguration;
 
 
-class AdwordsConfigurationRepository implements iAdwordsConfiguration
+class AdwordsConfigurationRepository extends Repository implements iAdwordsConfiguration
 {
 
-    private $adwords_configuration;
-
-    /**
-     * AdwordsConfigurationRepository constructor.
-     * @param AdwordsConfiguration $adwords_configuration
-     */
-    public function __construct(AdwordsConfiguration $adwords_configuration)
-    {
-        $this->adwords_configuration = $adwords_configuration;
-    }
+    
 
 
     /**
@@ -30,9 +21,9 @@ class AdwordsConfigurationRepository implements iAdwordsConfiguration
     public function createAdwordsConfiguration($data, $id = 0)
     {
         if($id == 0 ) {
-            return $this->adwords_configuration->create($data);
+            return $this->model->create($data);
         } else {
-            return $this->adwords_configuration->where('id',$id)->update($data);
+            return $this->model->where('id',$id)->update($data);
 
         }
     }
@@ -44,7 +35,7 @@ class AdwordsConfigurationRepository implements iAdwordsConfiguration
      */
     public function hasAdwordsConfiguration($fk_adwords_feed_id)
     {
-        return $this->adwords_configuration->where('fk_adwords_feed_id',$fk_adwords_feed_id)->count() == 1;
+        return $this->model->where('fk_adwords_feed_id',$fk_adwords_feed_id)->count() == 1;
     }
 
 
@@ -53,7 +44,7 @@ class AdwordsConfigurationRepository implements iAdwordsConfiguration
      */
     public function getAdwordsConfiguration($fk_adwords_feed_id)
     {
-        return $this->adwords_configuration->where('fk_adwords_feed_id',$fk_adwords_feed_id)->first();
+        return $this->model->where('fk_adwords_feed_id',$fk_adwords_feed_id)->first();
     }
 
 

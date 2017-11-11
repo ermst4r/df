@@ -11,21 +11,16 @@ use DB;
  * Class XmlMappingRepository
  * @package App\Entity\Repository
  */
-class ChannelCustomMappingRepository implements iChannelCustomMapping
+class ChannelCustomMappingRepository  extends Repository implements iChannelCustomMapping
 {
-    private $channel_custom_mapping;
 
-    public function __construct(ChannelCustomMapping $channel_custom_mapping)
-    {
-        $this->channel_custom_mapping = $channel_custom_mapping;
-    }
 
     /**
      * @param $data
      */
     public function createCustomChannel($data)
     {
-        $this->channel_custom_mapping->create($data);
+        $this->model->create($data);
     }
 
     /**]
@@ -36,7 +31,7 @@ class ChannelCustomMappingRepository implements iChannelCustomMapping
     public function removeCustomChannelMapping($fk_channel_feed_id,$fk_channel_type_id)
     {
 
-        return $this->channel_custom_mapping
+        return $this->model
             ->where('fk_channel_feed_id',$fk_channel_feed_id)
             ->where('fk_channel_type_id',$fk_channel_type_id)
             ->delete();
@@ -51,7 +46,7 @@ class ChannelCustomMappingRepository implements iChannelCustomMapping
      */
     public function getCustomFields($fk_channel_feed_id, $fk_channel_type_id)
     {
-        return $this->channel_custom_mapping
+        return $this->model
             ->where('fk_channel_feed_id',$fk_channel_feed_id)
             ->where('fk_channel_type_id',$fk_channel_type_id)
             ->get();

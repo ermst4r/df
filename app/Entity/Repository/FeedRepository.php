@@ -12,15 +12,10 @@ namespace App\Entity\Repository;
 use App\Entity\Feed;
 use App\Entity\Repository\Contract\iFeed;
 
-class FeedRepository implements iFeed
+class FeedRepository extends Repository implements iFeed 
 {
 
-    private $feed;
-    public function __construct(Feed $feed)
-    {
-
-        $this->feed = $feed;
-    }
+   
 
 
     /**
@@ -29,22 +24,22 @@ class FeedRepository implements iFeed
      */
     public function getAllActiveFeeds($active = true )
     {
-        return $this->feed->where('active',$active)->get();
+        return $this->model->where('active',$active)->get();
     }
 
 
     /**
-     * Get the feed by id
+     * Get the model by id
      * @param $id
      * @return mixed
      */
     public function getFeed($id)
     {
-        return $this->feed->findOrFail($id);
+        return $this->model->findOrFail($id);
     }
 
     /**
-     * Add the feed to the database
+     * Add the model to the database
      * @param array $data
      * @param int $id
      * @return int
@@ -52,10 +47,10 @@ class FeedRepository implements iFeed
     public function createFeed($data = array(),$id = 0)
     {
         if($id == 0 ) {
-            $feed = $this->feed->create($data);
+            $feed = $this->model->create($data);
             return $feed->id;
         } else {
-            $this->feed->find($id)->update($data);
+            $this->model->find($id)->update($data);
             return $id;
         }
     }
@@ -67,7 +62,7 @@ class FeedRepository implements iFeed
      */
     public function getFeedRules($id)
     {
-        return $this->feed->find($id)->feed_rules()->get();
+        return $this->model->find($id)->feed_rules()->get();
     }
 
 
@@ -78,9 +73,9 @@ class FeedRepository implements iFeed
     public function getFeedByStore($store_id,$limit = 0)
     {
         if($limit == 0 ) {
-            return $this->feed->where('fk_store_id',$store_id)->orderBy('created_at','desc')->get();
+            return $this->model->where('fk_store_id',$store_id)->orderBy('created_at','desc')->get();
         } else {
-            return $this->feed->where('fk_store_id',$store_id)->orderBy('created_at','desc')->limit($limit)->get();
+            return $this->model->where('fk_store_id',$store_id)->orderBy('created_at','desc')->limit($limit)->get();
         }
 
     }
@@ -91,7 +86,7 @@ class FeedRepository implements iFeed
      */
     public function removeFeed($feed_id)
     {
-        return $this->feed->where('id',$feed_id)->delete();
+        return $this->model->where('id',$feed_id)->delete();
     }
 
 

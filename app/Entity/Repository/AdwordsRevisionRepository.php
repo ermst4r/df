@@ -9,20 +9,10 @@ use App\Entity\AdwordsRevision;
 use App\Entity\Repository\Contract\iAdwordsRevision;
 
 
-class AdwordsRevisionRepository implements iAdwordsRevision
+class AdwordsRevisionRepository extends Repository implements iAdwordsRevision
 {
 
-    private $adwords_revision;
-
-    /**
-     * AdwordsKeywordRepository constructor.
-     * @param AdwordsKeyword $adwords_keyword
-     */
-    public function __construct(AdwordsRevision $adwords_revision)
-    {
-        $this->adwords_revision = $adwords_revision;
-    }
-
+ 
 
     /**
      * @param $fk_adwords_feed_id
@@ -30,7 +20,7 @@ class AdwordsRevisionRepository implements iAdwordsRevision
     public function getDeleteRevisions($fk_adwords_feed_id)
     {
 
-        return $this->adwords_revision->where('fk_adwords_feed_id',$fk_adwords_feed_id)->where('revision_type',RevisionType::DELETE)->pluck('id','generated_id');
+        return $this->model->where('fk_adwords_feed_id',$fk_adwords_feed_id)->where('revision_type',RevisionType::DELETE)->pluck('id','generated_id');
     }
 
     /**
@@ -40,7 +30,7 @@ class AdwordsRevisionRepository implements iAdwordsRevision
     public function getUpdatedRevisions($fk_adwords_feed_id)
     {
         $returnArray = [];
-        foreach($this->adwords_revision->where('fk_adwords_feed_id',$fk_adwords_feed_id)->where('revision_type',RevisionType::UPDATE)->get() as $rev) {
+        foreach($this->model->where('fk_adwords_feed_id',$fk_adwords_feed_id)->where('revision_type',RevisionType::UPDATE)->get() as $rev) {
             $returnArray[$rev->generated_id][] = [
                 'revision_field_name'=>$rev->revision_field_name,
                 'revision_new_content'=>$rev->revision_new_content,
@@ -57,9 +47,9 @@ class AdwordsRevisionRepository implements iAdwordsRevision
     public function createRevision($data, $id)
     {
         if($id > 0 ) {
-            $this->adwords_revision->create($data);
+            $this->model->create($data);
         } else {
-            $this->adwords_revision->where('id',$id)->update($data);
+            $this->model->where('id',$id)->update($data);
         }
     }
 
@@ -82,7 +72,7 @@ class AdwordsRevisionRepository implements iAdwordsRevision
                 'revision_field_name'=>null,
                 'revision_new_content'=>null,
             ];
-            $this->adwords_revision->create($data);
+            $this->model->create($data);
         }
 
     }
@@ -98,7 +88,7 @@ class AdwordsRevisionRepository implements iAdwordsRevision
          * Update where the id, fieldname and feed_id matches
          */
 
-        if($this->adwords_revision
+        if($this->model
                 ->where('generated_id',$data['generated_id'])
                 ->where('revision_field_name',$data['revision_field_name'])
                 ->where('fk_ads_preview_id',$data['fk_ads_preview_id'])
@@ -106,7 +96,7 @@ class AdwordsRevisionRepository implements iAdwordsRevision
                 ->count() > 0) {
 
 
-            $this->adwords_revision
+            $this->model
                 ->where('generated_id',$data['generated_id'])
                 ->where('revision_field_name',$data['revision_field_name'])
                 ->where('fk_adwords_feed_id',$data['fk_adwords_feed_id'])
@@ -115,7 +105,7 @@ class AdwordsRevisionRepository implements iAdwordsRevision
 
         } else {
 
-            $this->adwords_revision->create($data);
+            $this->model->create($data);
         }
     }
 

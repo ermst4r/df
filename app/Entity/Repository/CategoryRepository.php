@@ -10,17 +10,13 @@ use App\Entity\Repository\Contract\iCategory;
  * Class XmlMappingRepository
  * @package App\Entity\Repository
  */
-class CategoryRepository implements iCategory
+class CategoryRepository extends Repository implements iCategory
 {
-    private $toCategory;
-    public function __construct(Category $toCategory)
-    {
-        $this->toCategory = $toCategory;
-    }
+
 
     public function getCategories()
     {
-        return $this->toCategory->all();
+        return $this->model->all();
     }
 
     /**
@@ -28,7 +24,7 @@ class CategoryRepository implements iCategory
      */
     public function getToCategoryByTerm($term)
     {
-        return  $this->toCategory->where('category_name','like','%'.$term.'%')->get();
+        return  $this->model->where('category_name','like','%'.$term.'%')->get();
     }
 
     /**
@@ -37,7 +33,7 @@ class CategoryRepository implements iCategory
      */
     public function createToCategory($data = [])
     {
-        $to_category = $this->toCategory->create($data);
+        $to_category = $this->model->create($data);
         return $to_category->id;
     }
 

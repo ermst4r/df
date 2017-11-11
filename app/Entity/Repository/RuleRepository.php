@@ -5,14 +5,10 @@ namespace App\Entity\Repository;
 use App\Entity\Repository\Contract\iRule;
 use App\Entity\Rule;
 use DB;
-class RuleRepository  implements iRule  {
+class RuleRepository  extends Repository implements iRule  {
 
 
-    private $rule;
-    public function __construct(Rule $rule)
-    {
-        $this->rule =$rule;
-    }
+
 
     /**
      * @param int $adwords_feed_id
@@ -21,7 +17,7 @@ class RuleRepository  implements iRule  {
      */
     public function getAdwordsOrderRules($adwords_feed_id=0,$order='asc')
     {
-        $table = $this->rule->getTable();
+        $table = $this->model->getTable();
             return DB::table($table)
                 ->join('rules_adwords', $table.'.id', '=', 'rules_adwords.fk_rule_id')
                 ->select(DB::RAW($table.'.id AS rule_id,'.$table.".*, rules_adwords.*"))
@@ -39,7 +35,7 @@ class RuleRepository  implements iRule  {
      */
     public function getBolOrderdRules($bol_id, $order = 'asc')
     {
-        $table = $this->rule->getTable();
+        $table = $this->model->getTable();
         return DB::table($table)
             ->join('rules_bol', $table.'.id', '=', 'rules_bol.fk_rule_id')
             ->select(DB::RAW($table.'.id AS rule_id,'.$table.".*, rules_bol.*"))
@@ -57,7 +53,7 @@ class RuleRepository  implements iRule  {
      */
     public function getChannelOrdersRules($fk_channel_feed_id,$fk_channel_type_id=0,$order='asc')
     {
-        $table = $this->rule->getTable();
+        $table = $this->model->getTable();
         if($fk_channel_type_id == 0 ) {
             return DB::table($table)
                 ->join('rules_channel', $table.'.id', '=', 'rules_channel.fk_rule_id')
@@ -84,9 +80,9 @@ class RuleRepository  implements iRule  {
     public function createRule($data = array(), $id = 0)
     {
        if($id == 0 ) {
-           $id = $this->rule->create($data);
+           $id = $this->model->create($data);
        } else {
-           $this->rule->find($id)->update($data);
+           $this->model->find($id)->update($data);
        }
        return $id;
     }
@@ -98,11 +94,11 @@ class RuleRepository  implements iRule  {
     {
         if($id > 0 ) {
             if($multi ) {
-                return $this->rule->where('id',$id)->get();
+                return $this->model->where('id',$id)->get();
             }
-            return $this->rule->findOrFail($id);
+            return $this->model->findOrFail($id);
         } else {
-            return $this->rule->all();
+            return $this->model->all();
         }
 
     }
@@ -113,7 +109,7 @@ class RuleRepository  implements iRule  {
      */
     public function removeRule($id)
     {
-        $this->rule->findOrFail($id)->delete();
+        $this->model->findOrFail($id)->delete();
     }
 
     /**
@@ -123,9 +119,9 @@ class RuleRepository  implements iRule  {
     public function getOrderdRules($id,$order='asc',$is_channel_feed = false)
     {
         if(!$is_channel_feed)  {
-            return $this->rule->where('fk_feed_id',$id)->where('visible',true)->orderBy('order',$order)->get();
+            return $this->model->where('fk_feed_id',$id)->where('visible',true)->orderBy('order',$order)->get();
         } else {
-            return $this->rule->where('fk_channel_feed_id',$id)->where('visible',true)->orderBy('order',$order)->get();
+            return $this->model->where('fk_channel_feed_id',$id)->where('visible',true)->orderBy('order',$order)->get();
         }
 
     }
@@ -137,7 +133,7 @@ class RuleRepository  implements iRule  {
      */
     public function getRuleIdsFromChannel($fk_channel_feed_id)
     {
-        $table = $this->rule->getTable();
+        $table = $this->model->getTable();
         return DB::table($table)
             ->join('rules_channel', $table.'.id', '=', 'rules_channel.fk_rule_id')
             ->where('rules_channel.fk_channel_feed_id',$fk_channel_feed_id)
@@ -154,7 +150,7 @@ class RuleRepository  implements iRule  {
      */
     public function getRuleIdFromAdwords($adwords_feed_id)
     {
-        $table = $this->rule->getTable();
+        $table = $this->model->getTable();
         return DB::table($table)
             ->join('rules_adwords', $table.'.id', '=', 'rules_adwords.fk_rule_id')
             ->where('rules_adwords.fk_adwords_feed_id',$adwords_feed_id)
@@ -170,7 +166,7 @@ class RuleRepository  implements iRule  {
      */
     public function getRuleIdsFromBol($bol_id)
     {
-        $table = $this->rule->getTable();
+        $table = $this->model->getTable();
         return DB::table($table)
             ->join('rules_bol', $table.'.id', '=', 'rules_bol.fk_rule_id')
             ->where('rules_bol.fk_bol_id',$bol_id)

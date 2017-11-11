@@ -106,9 +106,13 @@ class Import extends Command
     public function __construct()
     {
 
+        /**
+         * WARNING <=====
+         * please leave this commented otherwise the job wont work
+         */
         parent::__construct();
 //        $this->feed = new FeedRepository(new Feed());
-//        $this->feed_id = (int) 13;
+//        $this->feed_id = 6;
 //        $this->get_feed = $this->feed->getFeed($this->feed_id);
 //        $this->importfeedFacade = new ImportFeedFacade();
 //        $this->first_import = true;
@@ -137,13 +141,14 @@ class Import extends Command
     public function handle()
     {
 
+
+        event(new \App\Events\FeedImported($this->feed_id,true));
         $index_name =  createEsIndexName($this->feed_id);
         $DynamicFeedRepository = new DynamicFeedRepository($index_name,DFBUILDER_ES_TYPE);
         $customMappingRepository = new CustomMappingRepository(new CustomMapping());
         $get_custom_mapping = $customMappingRepository->getCustomMapping($this->feed_id,true,'fk_feed_id');
         $feed_args = $this->importfeedFacade->initializeFeed($this->feed_id,$this->feed, $this->get_feed);
         $this->importfeedFacade->refreshIndex($index_name,$DynamicFeedRepository);
-
         $this->importfeedFacade->doImport($this->feed_id,$DynamicFeedRepository,$this->feed,$feed_args,true,$get_custom_mapping);
 
 

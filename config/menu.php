@@ -68,16 +68,15 @@ return array(
             )
     ]),
 
-    /**
-     * Menu
-     */
 
-    //'webshop' => array('route' => 'index.dashboard', 'translation_key' => 'messages.menu_lbl5', 'fa-icon'=>'fa fa-angle-right', 'children' => array()),
-//    'webshop' => array('route' => 'index.dashboard', 'translation_key' => 'messages.menu_lbl5', 'fa-icon'=>'fa fa-angle-right', 'children' =>
-//        array(
-//            'create'=>['route'=>'index.dashboard','translation_key'=>'Aanmaken','fa-icon'=>'fa fa-angle-right'],
-//            'manage'=>['route'=>'index.dashboard','translation_key'=>'Beheren','fa-icon'=>'fa fa-angle-right']
-//        )
+/**
+ * Uncomment below to enable modules
+ */
+
+//    'categories' => array('route' => 'categorytable.create', 'translation_key' => 'messages.extra_module_menu_lbl1', 'fa-icon'=>'fa fa-plug',
+//        'active_class'=>['categorytable.create'],
+//        'children' => array()),
+
 
 
 

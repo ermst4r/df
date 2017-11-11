@@ -146,6 +146,19 @@
 
                     <div class="xml_advanced_settings_field" style="display: none">
 
+
+                        <div class="form-group" >
+                            <label class="col-sm-2 control-label">{!! trans('messages.import_selectfeed_lbl19') !!}</label>
+                            <div class="col-sm-10">
+                                {{ Form::select('feed_custom_parser', \App\DfCore\DfBs\Import\Xml\CustomXmlParser\Register::getXmlParsers(),null,['class'=>'form-control']) }}
+                                <p class="help-block">
+                                    {!! trans('messages.import_selectfeed_lbl18') !!}
+                                </p>
+                            </div>
+
+                        </div>
+
+
                         <div class="form-group" >
                             <label class="col-sm-2 control-label">{!! trans('messages.import_selectfeed_lbl13') !!}</label>
                             <div class="col-sm-10">
@@ -155,6 +168,9 @@
                                 </p>
                             </div>
                             </div>
+
+
+
 
 
 

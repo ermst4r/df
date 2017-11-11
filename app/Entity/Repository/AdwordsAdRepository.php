@@ -7,26 +7,16 @@ use App\Entity\AdwordsAd;
 use App\Entity\Repository\Contract\iAdwordsAd;
 
 
-class AdwordsAdRepository implements iAdwordsAd
+class AdwordsAdRepository extends Repository implements iAdwordsAd
 {
 
-    private $adwords_ad;
-
-    /**
-     * AdwordsAdRepository constructor.
-     * @param AdwordsAd $adwords_ad
-     */
-    public function __construct(AdwordsAd $adwords_ad)
-    {
-        $this->adwords_ad = $adwords_ad;
-    }
 
 
 
 
     public function removeParentAd($parent_id)
     {
-        return $this->adwords_ad->where('parent_id',$parent_id)->delete();
+        return $this->model->where('parent_id',$parent_id)->delete();
     }
 
     /**
@@ -35,7 +25,7 @@ class AdwordsAdRepository implements iAdwordsAd
      */
     public function countAds($ad_id)
     {
-        return $this->adwords_ad->where('parent_id',$ad_id)->count();
+        return $this->model->where('parent_id',$ad_id)->count();
     }
 
     /**
@@ -46,9 +36,9 @@ class AdwordsAdRepository implements iAdwordsAd
     public function createAds($data,$id=0)
     {
         if($id == 0 ) {
-           return  $this->adwords_ad->create($data);
+           return  $this->model->create($data);
         } else {
-            return $this->adwords_ad->where('id',$id)->update($data);
+            return $this->model->where('id',$id)->update($data);
         }
 
     }
@@ -59,7 +49,7 @@ class AdwordsAdRepository implements iAdwordsAd
      */
     public function getAdwordsAds($fk_adwords_feed_id)
     {
-        return $this->adwords_ad->where('fk_adwords_feed_id',$fk_adwords_feed_id)->where('is_backup_template',false)->where('parent_id',0)->orderBy('created_at','asc')->get();
+        return $this->model->where('fk_adwords_feed_id',$fk_adwords_feed_id)->where('is_backup_template',false)->where('parent_id',0)->orderBy('created_at','asc')->get();
     }
 
 
@@ -69,7 +59,7 @@ class AdwordsAdRepository implements iAdwordsAd
      */
     public function getBackupTemplate($ad_id)
     {
-        return $this->adwords_ad->where('is_backup_template',true)->where('parent_id',$ad_id)->get();
+        return $this->model->where('is_backup_template',true)->where('parent_id',$ad_id)->get();
     }
 
 
@@ -80,7 +70,7 @@ class AdwordsAdRepository implements iAdwordsAd
 
     public function getAd($id)
     {
-        return $this->adwords_ad->find($id);
+        return $this->model->find($id);
     }
 
     /**
@@ -90,7 +80,7 @@ class AdwordsAdRepository implements iAdwordsAd
     public function removeAd($id)
     {
         if($id > 0 ) {
-            return $this->adwords_ad->where('id',$id)->delete();
+            return $this->model->where('id',$id)->delete();
         } else {
             return false;
         }

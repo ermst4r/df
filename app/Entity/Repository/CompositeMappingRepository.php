@@ -17,7 +17,7 @@ use App\Entity\Repository\Contract\iCompositeMapping;
  * Class CompositeMappingRepository
  * @package App\Entity\Repository
  */
-class CompositeMappingRepository implements iCompositeMapping
+class CompositeMappingRepository  extends Repository implements iCompositeMapping
 {
 
     private $composite_mapping;
@@ -28,17 +28,10 @@ class CompositeMappingRepository implements iCompositeMapping
      */
     public function hasCompositeMapping($feed_id)
     {
-        return $this->composite_mapping->where('fk_feed_id',$feed_id)->count() > 0 ;
+        return $this->model->where('fk_feed_id',$feed_id)->count() > 0 ;
     }
 
-    /**
-     * CompositeMappingRepository constructor.
-     * @param CompositeMapping $composite_mapping
-     */
-    public function __construct(CompositeMapping $composite_mapping)
-    {
-        $this->composite_mapping = $composite_mapping;
-    }
+    
 
     /**
      * @param array $data
@@ -46,7 +39,7 @@ class CompositeMappingRepository implements iCompositeMapping
      */
     public function createCompositeMapping($data = [])
     {
-       return  $this->composite_mapping->create($data);
+       return  $this->model->create($data);
     }
 
     /**
@@ -55,7 +48,7 @@ class CompositeMappingRepository implements iCompositeMapping
      */
     public function getCompositeMapping($feed_id)
     {
-       return $this->composite_mapping->where('fk_feed_id',$feed_id)->pluck('id','field')->toArray();
+       return $this->model->where('fk_feed_id',$feed_id)->pluck('id','field')->toArray();
     }
 
     /**
@@ -64,7 +57,7 @@ class CompositeMappingRepository implements iCompositeMapping
      */
     public function removeCompositeMapping($feed_id)
     {
-       return $this->composite_mapping->where('fk_feed_id',$feed_id)->delete();
+       return $this->model->where('fk_feed_id',$feed_id)->delete();
     }
 
 

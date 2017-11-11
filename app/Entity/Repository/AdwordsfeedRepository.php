@@ -8,10 +8,10 @@ use App\Entity\Repository\Contract\iAdwordsfeed;
 use DB;
 
 
-class AdwordsfeedRepository implements iAdwordsfeed
+class AdwordsfeedRepository extends Repository implements iAdwordsfeed
 {
 
-    private $adwords_feed;
+   
 
 
 
@@ -25,8 +25,8 @@ class AdwordsfeedRepository implements iAdwordsfeed
      */
     public function getCompleteAdwordsFeeds($store_id)
     {
-        $table = $this->adwords_feed->getTable();
-        return DB::table($table)
+        $table = $this->model->getTable();
+        return $this->model
             ->join('feeds', $table.'.fk_feed_id', '=', 'feeds.id')
             ->select(
                 DB::RAW('
@@ -45,7 +45,7 @@ class AdwordsfeedRepository implements iAdwordsfeed
      */
     public function getAllAdwordsFeeds($active = true)
     {
-        return $this->adwords_feed->where('active',$active)->get();
+        return $this->model->where('active',$active)->get();
     }
 
     /**
@@ -53,17 +53,9 @@ class AdwordsfeedRepository implements iAdwordsfeed
      */
     public function removeAdwordsFeed($id)
     {
-       $this->adwords_feed->where('id',$id)->delete();
+       $this->model->where('id',$id)->delete();
     }
 
-    /**
-     * AdwordsfeedRepository constructor.
-     * @param Adwordsfeed $adwords_feed
-     */
-    public function __construct(Adwordsfeed $adwords_feed)
-    {
-        $this->adwords_feed = $adwords_feed;
-    }
 
 
     /**
@@ -72,27 +64,27 @@ class AdwordsfeedRepository implements iAdwordsfeed
      */
     public function getAdwordsFeedFromFeedId($feed_id)
     {
-        return $this->adwords_feed->where('fk_feed_id',$feed_id)->get();
+        return $this->model->where('fk_feed_id',$feed_id)->get();
     }
     /**
      *
      */
     public function getAdwordsFeed($id)
     {
-       return $this->adwords_feed->find($id);
+       return $this->model->find($id);
     }
 
     /**
      * @param $data
      * @param int $id
-     * @return int
+     * @return mixed
      */
     public function createAdwordsFeed($data,$id=0)
     {
         if($id == 0 ) {
-            return $this->adwords_feed->create($data);
+            return $this->model->create($data);
         } else {
-             $this->adwords_feed->where('id',$id)->update($data);
+             $this->model->where('id',$id)->update($data);
             return $id;
         }
 

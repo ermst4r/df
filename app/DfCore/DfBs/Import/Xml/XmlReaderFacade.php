@@ -55,6 +55,7 @@ class XmlReaderFacade extends XmlMappingFacade
     public function transformCustomXmlToArray($node,$feed_args=null)
     {
 
+
         $xml_node = $this->loadSimpleXmlString($node);
         $xml_data =   $this->formatXmlData(Xml2Array::parse($xml_node),$feed_args['prepend_nodes'],$feed_args['feed_xml_root_node']);
         return $xml_data;

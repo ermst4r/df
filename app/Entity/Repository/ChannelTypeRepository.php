@@ -10,13 +10,8 @@ use App\Entity\Repository\Contract\iChannelType;
  * Class XmlMappingRepository
  * @package App\Entity\Repository
  */
-class ChannelTypeRepository implements iChannelType
+class ChannelTypeRepository extends Repository implements iChannelType
 {
-    private $channel_type;
-    public function __construct(ChannelType $channel_type)
-    {
-        $this->channel_type = $channel_type;
-    }
 
 
     /**
@@ -25,7 +20,7 @@ class ChannelTypeRepository implements iChannelType
      */
     public function getChannelTypeByChannel($channel_id)
     {
-        return $this->channel_type->where('fk_channel_id',$channel_id)->get();
+        return $this->model->where('fk_channel_id',$channel_id)->get();
     }
 
     /**
@@ -35,11 +30,11 @@ class ChannelTypeRepository implements iChannelType
     public function createChannelType($data)
     {
 
-        $has_entry = $this->channel_type->where('id',$data['id'])->count();
+        $has_entry = $this->model->where('id',$data['id'])->count();
         if($has_entry == 0) {
-            $this->channel_type->create($data);
+            $this->model->create($data);
         } else {
-            $this->channel_type->where('id',$data['id'])->update($data);
+            $this->model->where('id',$data['id'])->update($data);
         }
         return $data['id'];
 
@@ -47,6 +42,6 @@ class ChannelTypeRepository implements iChannelType
 
     public function removeChannelType($channel_id)
     {
-        $this->channel_type->where('fk_channel_id',$channel_id)->delete();
+        $this->model->where('fk_channel_id',$channel_id)->delete();
     }
 }

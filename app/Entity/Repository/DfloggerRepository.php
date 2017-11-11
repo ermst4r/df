@@ -15,14 +15,10 @@ use App\Entity\Repository\Contract\iCsvMapping;
 use App\Entity\Repository\Contract\iDflogger;
 
 
-class DfloggerRepository implements iDflogger
+class DfloggerRepository  extends Repository implements iDflogger
 {
 
-    private $dflogger;
-    public function __construct(Dflogger $dflogger)
-    {
-        $this->dflogger = $dflogger;
-    }
+
 
 
     /**
@@ -40,7 +36,7 @@ class DfloggerRepository implements iDflogger
             $end_date = $end_date. ' 23:59:59';
         }
 
-        return   $this->dflogger
+        return   $this->model
             ->whereBetween('time',array($start_date,$end_date))
             ->get();
 

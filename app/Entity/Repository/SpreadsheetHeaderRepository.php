@@ -22,19 +22,10 @@ use App\Entity\SpreadsheetHeader;
 
 
 
-class SpreadsheetHeaderRepository  implements iSpreadsheetHeader    {
+class SpreadsheetHeaderRepository extends Repository  implements iSpreadsheetHeader    {
 
 
-    private $spreadsheet_header;
 
-    /**
-     * SpreadsheetHeaderRepository constructor.
-     * @param SpreadsheetHeader $spreadsheet_header
-     */
-    public function __construct(SpreadsheetHeader $spreadsheet_header)
-    {
-        $this->spreadsheet_header =$spreadsheet_header;
-    }
 
     /**
      * @param $fk_feed_id
@@ -42,12 +33,12 @@ class SpreadsheetHeaderRepository  implements iSpreadsheetHeader    {
      */
     public function removeSpreadsheetHeaders($fk_feed_id)
     {
-        return $this->spreadsheet_header->where('fk_feed_id',$fk_feed_id)->delete();
+        return $this->model->where('fk_feed_id',$fk_feed_id)->delete();
     }
 
     public function removeSpreadsheetHeadersByChannel($fk_channel_feed_id,$fk_channel_type_id)
     {
-        return $this->spreadsheet_header->where('fk_channel_feed_id',$fk_channel_feed_id)->
+        return $this->model->where('fk_channel_feed_id',$fk_channel_feed_id)->
             where('fk_channel_type_id',$fk_channel_type_id)->delete();
 
     }
@@ -57,13 +48,13 @@ class SpreadsheetHeaderRepository  implements iSpreadsheetHeader    {
      */
     public function saveSpreadsheetHeaders($data)
     {
-        $this->spreadsheet_header->create($data);
+        $this->model->create($data);
 
     }
 
     public function pluckSpreadSheetHeaders($fk_channel_feed_id,$fk_channel_type_id)
     {
-       return $this->spreadsheet_header->where('fk_channel_feed_id',$fk_channel_feed_id)->where('fk_channel_type_id',$fk_channel_type_id)->pluck('spreadsheet_header')->toArray();
+       return $this->model->where('fk_channel_feed_id',$fk_channel_feed_id)->where('fk_channel_type_id',$fk_channel_type_id)->pluck('model')->toArray();
     }
 
 

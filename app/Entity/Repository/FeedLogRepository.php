@@ -12,23 +12,10 @@ namespace App\Entity\Repository;
 use App\Entity\FeedLog;
 use App\Entity\Repository\Contract\iFeedLog;
 use DB;
-class FeedLogRepository implements iFeedLog
+class FeedLogRepository extends Repository implements iFeedLog
 {
 
-    /**
-     * @var FeedLog
-     */
-    private $feed_log;
 
-    /**
-     * FeedLogRepository constructor.
-     * @param FeedLog $feed_log
-     */
-    public function __construct(FeedLog $feed_log)
-    {
-
-        $this->feed_log = $feed_log;
-    }
 
 
     /**
@@ -38,7 +25,7 @@ class FeedLogRepository implements iFeedLog
      */
     public function getLogs($feed_id)
     {
-        return $this->feed_log->where('fk_feed_id',$feed_id)->get();
+        return $this->model->where('fk_feed_id',$feed_id)->get();
     }
 
     /**
@@ -50,10 +37,10 @@ class FeedLogRepository implements iFeedLog
     public function createFeedLog($data = array(),$id = 0)
     {
         if($id == 0 ) {
-            $feed_log = $this->feed_log->create($data);
+            $feed_log = $this->model->create($data);
             return $feed_log->id;
         } else {
-            $this->feed_log->find($id)->update($data);
+            $this->model->find($id)->update($data);
             return $id;
         }
     }
@@ -73,16 +60,16 @@ class FeedLogRepository implements iFeedLog
             $end_date = $end_date. ' 23:59:59';
         }
 
-        $table = $this->feed_log->getTable();
+        $table = $this->model->getTable();
         if($limit == 0 ) {
-            return DB::table($table)
+            return $this->model
                 ->join('feeds', $table.'.fk_feed_id', '=', 'feeds.id')
                 ->select(DB::RAW($table.'.created_at AS log_date,'.$table.'.*, feeds.*'))
                 ->whereBetween($table.'.created_at',array($start_date,$end_date))
                 ->orderBy($table.'.created_at','desc')
                 ->get();
         } else {
-            return DB::table($table)
+            return $this->model
                 ->join('feeds', $table.'.fk_feed_id', '=', 'feeds.id')
                 ->select(DB::RAW($table.'.created_at AS log_date,'.$table.'.*, feeds.*'))
                 ->whereBetween($table.'.created_at',array($start_date,$end_date))

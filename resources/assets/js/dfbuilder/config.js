@@ -17,5 +17,5 @@
 
 
 var config = {
-    pusher_key:"xxx"
+    pusher_key:"7f00be1ab75054c8fad0"
 };

@@ -28,6 +28,7 @@ use App\DfCore\DfBs\Import\Mapping\Mapping;
 use App\DfCore\DfBs\Import\Mapping\MappingFactory;
 use App\DfCore\DfBs\Import\Mapping\MappingValidator;
 use App\DfCore\DfBs\Import\Remote\RemoteFileService;
+use App\DfCore\DfBs\Import\Xml\CustomXmlParser\Parsefeed;
 use App\DfCore\DfBs\Import\Xml\XmlReaderFacade;
 use App\ElasticSearch\ESChannel;
 use App\ElasticSearch\ESHot;
@@ -229,8 +230,6 @@ class ImportController extends Controller
         $mapping = null;
         $feed  = $this->feed->getFeed($id);
         $file_name = RemoteFileService::generateSavePath($type,$id);
-
-
         $file_saved = file_exists($file_name);
         $fields_to_map = $this->field_to_map->getField();
         $custom_mappings = $this->custom_mapping->getCustomMapping($id,false,'fk_feed_id');
@@ -239,6 +238,15 @@ class ImportController extends Controller
         $mapping_info = [];
 
         if($file_saved) {
+
+            if(strlen($feed->feed_custom_parser) >0  || !is_null($feed->feed_custom_parser)) {
+                $parse_feed = new Parsefeed($file_name,$feed->feed_custom_parser);
+                $parse_feed->writeNewFeedData();
+                $this->feed->createFeed(['xml_root_node'=>NULL,'prepend_nodes'=>NULL,'prepend_identifier'=>NULL],$feed->id);
+                $feed = $this->feed->getFeed($feed->id);
+
+            }
+
             $mapping_info = MappingFactory::setMapping($file_name,$feed);
             $mapping =  $mapping_info['workable_data'];
             $mapping = Mapping::prefillMapping($mapping,$fields_to_map);
@@ -275,7 +283,7 @@ class ImportController extends Controller
         $update_root_node = (int) $request->get('update_root_node');
 
         if($update_root_node == 0 ) {
-            $data = $request->only(['feed_name','feed_url','feed_type','xml_root_node','update_interval','active','prepend_nodes','prepend_identifier']);
+            $data = $request->only(['feed_name','feed_url','feed_type','xml_root_node','update_interval','active','prepend_nodes','prepend_identifier','feed_custom_parser']);
             $data['fk_store_id']  = $request->session()->get('store_id');
             $id = (int) $request->get('id');
             // redirect back when we see that the remote url doesn't exists
@@ -314,6 +322,9 @@ class ImportController extends Controller
         $feed = $this->feed->getFeed($id);
         $file_name = RemoteFileService::generateSavePath($type,$id);
         RemoteFileService::downloadFileWithCurl($feed->feed_url,$file_name);
+
+
+
 
         if($feed->feed_type == ImportType::XML) {
             $feed_type = FeedWriter::detectFeedType($file_name);

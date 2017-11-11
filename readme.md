@@ -76,6 +76,7 @@ resources/assets/dfbuilder/config.js
 5. run php artisan key:generate
 5. install nvm and use node v.6.2.9 (curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.0/install.sh | bash)
 6. php artisan migrate --seed 
+7. php artisan module:migrate Category
 ```
 
 #Supervisor Job processor

@@ -20,7 +20,7 @@ class CreateAdsPreview extends Migration
             $table->string('description')->index();
             $table->string('path_1')->index();
             $table->string('path_2')->index();
-            $table->string('final_url')->index();
+            $table->mediumText('final_url');
             $table->string('errors')->nullable()->index();
             $table->mediumText('adwords_api_message')->nullable();
             $table->string('update_hash')->nullable();

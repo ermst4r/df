@@ -17,26 +17,17 @@ use App\Entity\Repository\Contract\iCustomMapping;
 use App\Entity\Repository\Contract\iDflogger;
 
 
-class CustomMappingRepository implements iCustomMapping
+class CustomMappingRepository extends Repository implements iCustomMapping
 {
 
-    private $custom_mapping;
 
-    /**
-     * CustomMappingRepository constructor.
-     * @param CustomMapping $customMapping
-     */
-    public function __construct(CustomMapping $customMapping)
-    {
-        $this->custom_mapping = $customMapping;
-    }
 
     /**
      * @param $fk_feed_id
      */
     public function removeCustomMapping($fk_feed_id)
     {
-        $this->custom_mapping->where('fk_feed_id',$fk_feed_id)->delete();
+        $this->model->where('fk_feed_id',$fk_feed_id)->delete();
     }
 
     /**
@@ -47,9 +38,9 @@ class CustomMappingRepository implements iCustomMapping
     public function createCustomMapping($data, $id=0)
     {
         if($id == 0 ) {
-            return  $this->custom_mapping->create($data);
+            return  $this->model->create($data);
         } else {
-            return $this->custom_mapping->where('id',$id)->update($data);
+            return $this->model->where('id',$id)->update($data);
         }
 
     }
@@ -63,9 +54,9 @@ class CustomMappingRepository implements iCustomMapping
     public function getCustomMapping($id, $pluck = false,$col ='')
     {
         if(!$pluck) {
-            return $this->custom_mapping->where($col,$id)->get();
+            return $this->model->where($col,$id)->get();
         } else {
-            return $this->custom_mapping->where($col,$id)->pluck('custom_name')->toArray();
+            return $this->model->where($col,$id)->pluck('custom_name')->toArray();
         }
     }
 

@@ -10,21 +10,9 @@ use DB;
  * Class XmlMappingRepository
  * @package App\Entity\Repository
  */
-class ChannelFeedRepository implements iChannelFeed
+class ChannelFeedRepository extends Repository implements iChannelFeed
 {
-    /**
-     * @var ChannelFeed
-     */
-    private $channel_feed;
 
-    /**
-     * ChannelFeedRepository constructor.
-     * @param ChannelFeed $channel_feed
-     */
-    public function __construct(ChannelFeed $channel_feed)
-    {
-        $this->channel_feed = $channel_feed;
-    }
 
 
     /**
@@ -35,17 +23,17 @@ class ChannelFeedRepository implements iChannelFeed
     public function getActiveChannels($active= true,$from_feed = 0)
     {
         if($from_feed > 0 ) {
-            return $this->channel_feed->where('active',$active)->where('fk_feed_id',$from_feed)->get();
+            return $this->model->where('active',$active)->where('fk_feed_id',$from_feed)->get();
         } else {
-            return $this->channel_feed->where('active',$active)->get();
+            return $this->model->where('active',$active)->get();
         }
-      
+
 
     }
 
     public function getActiveChannelsFromFeed($feed_id)
     {
-        return $this->channel_feed->where('fk_feed_id',$feed_id)->orderBy('created_at','desc')->get();
+        return $this->model->where('fk_feed_id',$feed_id)->orderBy('created_at','desc')->get();
     }
 
 
@@ -55,7 +43,7 @@ class ChannelFeedRepository implements iChannelFeed
      */
     public function getCompleteChannelDetails($store_id)
     {
-        $table = $this->channel_feed->getTable();
+        $table = $this->model->getTable();
         return DB::table($table)
             ->join('feeds', $table.'.fk_feed_id', '=', 'feeds.id')
             ->join('channel', $table.'.fk_channel_id', '=','channel.id')
@@ -78,11 +66,11 @@ class ChannelFeedRepository implements iChannelFeed
     public function createChannelFeed($data, $id=0)
     {
         if($id == 0 ) {
-            $channel_feed = $this->channel_feed->create($data);
+            $channel_feed = $this->model->create($data);
             return $channel_feed->id;
         } else {
 
-            $this->channel_feed->where('id',$id)->update($data);
+            $this->model->where('id',$id)->update($data);
             return $id;
         }
     }
@@ -95,9 +83,9 @@ class ChannelFeedRepository implements iChannelFeed
     public function getChannelFeed($id = 0)
     {
         if($id > 0 ) {
-            return $this->channel_feed->find($id);
+            return $this->model->find($id);
         } else {
-            return $this->channel_feed->all();
+            return $this->model->all();
         }
     }
 
@@ -108,7 +96,7 @@ class ChannelFeedRepository implements iChannelFeed
     public function removeChannelFeed($id)
     {
 
-        $this->channel_feed->where('id',$id)->delete();
+        $this->model->where('id',$id)->delete();
     }
 
 

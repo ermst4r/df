@@ -13,14 +13,10 @@ use App\Entity\Csvmapping;
 use App\Entity\Repository\Contract\iCsvMapping;
 
 
-class CsvMappingRepository implements iCsvMapping
+class CsvMappingRepository extends Repository implements iCsvMapping
 {
 
-    private $csvmapping;
-    public function __construct(Csvmapping $csvmapping)
-    {
-        $this->csvmapping = $csvmapping;
-    }
+
 
 
     /**
@@ -29,7 +25,7 @@ class CsvMappingRepository implements iCsvMapping
      */
     public function getCsvMapping($id)
     {
-        return $this->csvmapping->findOrFail($id);
+        return $this->model->findOrFail($id);
     }
 
     /**
@@ -40,7 +36,7 @@ class CsvMappingRepository implements iCsvMapping
     public function createCsvMapping($data = array())
     {
         foreach($data as $rows) {
-            $this->csvmapping->create($rows);
+            $this->model->create($rows);
         }
 
         return count($data);
@@ -54,7 +50,7 @@ class CsvMappingRepository implements iCsvMapping
      */
     public function isMapped($feed_id)
     {
-        return $this->csvmapping->where('fk_feed_id',$feed_id)->count() >= 1;
+        return $this->model->where('fk_feed_id',$feed_id)->count() >= 1;
     }
 
     /**
@@ -63,7 +59,7 @@ class CsvMappingRepository implements iCsvMapping
      */
     public function getPlainMappedFields($feed_id)
     {
-        $array =  $this->csvmapping->where('fk_feed_id','=',$feed_id)->pluck('mapped_field_name','mapped_csv_name');
+        $array =  $this->model->where('fk_feed_id','=',$feed_id)->pluck('mapped_field_name','mapped_csv_name');
         $return_array = [];
 
         foreach($array as $key=>$values) {
@@ -80,7 +76,7 @@ class CsvMappingRepository implements iCsvMapping
      */
     public  function removeMapping($id)
     {
-        return $this->csvmapping->where('fk_feed_id','=',$id)->delete();
+        return $this->model->where('fk_feed_id','=',$id)->delete();
     }
 
 }

@@ -16,7 +16,8 @@ class CreateFeedTable extends Migration
         Schema::create('feeds', function (Blueprint $table) {
             $table->increments('id');
             $table->string('feed_name')->index();
-            $table->string('feed_url');
+            $table->string('feed_custom_parser')->index()->nullable();
+            $table->mediumText('feed_url');
             $table->string('feed_type')->index();
             $table->boolean('active')->default(true);
             $table->dateTime('feed_updated')->nullable();
